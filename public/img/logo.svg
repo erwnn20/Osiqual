@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="210mm"
+   height="210mm"
+   viewBox="0 0 210 210"
+   version="1.1"
+   id="svg1"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <g
+     id="layer1">
+    <circle
+       style="display:inline;fill:#005168;fill-opacity:1;stroke:none;stroke-width:2.73961;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:12.9;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+       id="path28-67-3-7-6"
+       cx="-105.10126"
+       cy="-105.03532"
+       transform="scale(-1)"
+       r="102.99271" />
+    <circle
+       style="display:inline;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:2.73961;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:12.9;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+       id="path28-6-63-4-8-4"
+       cx="-105.10126"
+       cy="-105.03532"
+       transform="scale(-1)"
+       r="65.915337" />
+    <circle
+       style="display:inline;fill:#f07e26;fill-opacity:1;stroke:none;stroke-width:2.73961;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:12.9;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+       id="path28-6-6-40-5-0-1"
+       cx="-105.10126"
+       cy="-105.03532"
+       transform="scale(-1)"
+       r="41.197079" />
+    <circle
+       style="display:inline;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:2.19167;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:12.9;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+       id="path28-6-6-4-8-7-7-1"
+       cx="-105.10126"
+       cy="-105.03532"
+       transform="scale(-1)"
+       r="16.478834" />
+    <path
+       id="path64-0"
+       style="fill:#005168;fill-opacity:1;stroke:#ffffff;stroke-width:5.21981;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:0;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke"
+       d="M 152.93133,10.596217 132.92097,42.806246 118.24928,22.0419 l -12.58125,80.1955 66.53277,-46.039274 -24.81188,-4.442008 20.044,-32.264171 z" />
+  </g>
+</svg>

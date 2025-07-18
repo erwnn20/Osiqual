@@ -1,0 +1,197 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+@theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    'Segoe UI Symbol', 'Noto Color Emoji';
+
+    --color-primary: #005168;
+    --color-secondary: #F07E26;
+
+    --color-valid: #00B112;
+    --color-warning: var(--color-amber-500);
+    --color-error: #DA3636;
+
+    --color-default-50: var(--color-slate-50);
+    --color-default-100: var(--color-slate-100);
+    --color-default-200: var(--color-slate-200);
+    --color-default-300: var(--color-slate-300);
+    --color-default-400: var(--color-slate-400);
+    --color-default-500: var(--color-slate-500);
+    --color-default-600: var(--color-slate-600);
+    --color-default-700: var(--color-slate-700);
+    --color-default-800: var(--color-slate-800);
+    --color-default-900: var(--color-slate-900);
+    --color-default-950: var(--color-slate-950);
+
+    --shadow-center: 0 0 15px 3px var(--tw-shadow-color, rgb(0 0 0 / 0.2));
+}
+
+@layer base {
+    thead tr th {
+        @apply px-4 py-2.5 whitespace-nowrap;
+    }
+
+    tbody tr th {
+        @apply w-full text-default-800 /*whitespace-nowrap*/;
+    }
+
+    tbody tr th, tbody tr td {
+        @apply h-14 px-4 whitespace-nowrap;
+    }
+
+    .dark {
+        --color-primary: var(--color-secondary);
+
+        --color-default-50: var(--color-slate-950);
+        --color-default-100: var(--color-slate-900);
+        --color-default-200: var(--color-slate-800);
+        --color-default-300: var(--color-slate-700);
+        --color-default-400: var(--color-slate-600);
+        --color-default-500: var(--color-slate-500);
+        --color-default-600: var(--color-slate-400);
+        --color-default-700: var(--color-slate-300);
+        --color-default-800: var(--color-slate-200);
+        --color-default-900: var(--color-slate-100);
+        --color-default-950: var(--color-slate-50);
+    }
+
+    * {
+        scrollbar-color: var(--color-default-400) transparent;
+    }
+}
+
+@layer components {
+    .btn {
+        @apply inline-flex items-center justify-center w-fit;
+        @apply ring-4 ring-transparent;
+        @apply ring-offset-0 ring-offset-default-50;
+        @apply rounded-lg font-medium shadow-md;
+        @apply transition-all duration-200 cursor-pointer;
+
+        @apply hover:shadow-lg;
+        @apply focus:outline-none;
+        @apply disabled:pointer-events-none;
+    }
+
+    /* Button small */
+    .btn.btn-sm {
+        @apply px-5 py-1 text-sm gap-1;
+    }
+
+    .btn.btn-sm.btn-icon {
+        @apply ps-2.5 pe-3.5;
+    }
+
+    .btn.btn-sm.btn-icon i,
+    .btn.btn-sm.btn-icon svg {
+        @apply py-1;
+    }
+
+    /* Button Medium */
+    .btn.btn-md {
+        @apply px-5 py-1.5 text-base gap-1 rounded-xl ;
+    }
+
+    .btn.btn-md.btn-icon {
+        @apply ps-2.5 pe-3.5;
+    }
+
+    .btn.btn-md.btn-icon i,
+    .btn.btn-md.btn-icon svg {
+        @apply py-1;
+    }
+
+    /* Button Large */
+    .btn.btn-lg {
+        @apply px-6 py-2.5 text-2xl gap-1 rounded-2xl;
+    }
+
+    .btn.btn-lg.btn-icon {
+        @apply ps-3 pe-5;
+    }
+
+    .btn.btn-lg.btn-icon i,
+    .btn.btn-lg.btn-icon svg {
+        @apply px-0.5;
+    }
+
+    /* Button Colors */
+    .btn.btn-primary {
+        @apply bg-primary text-default-50;
+        @apply hover:bg-primary/90;
+        @apply active:bg-primary/80;
+        @apply focus:ring-primary/50;
+        @apply disabled:bg-primary/50
+    }
+
+    .btn.btn-secondary {
+        @apply bg-default-200/70 text-primary;
+        @apply rounded-lg ring-2 shadow-none;
+        @apply hover:bg-default-200;
+        @apply active:bg-default-300/55 active:shadow-inner;
+        @apply focus:ring-primary;
+        @apply disabled:opacity-50;
+    }
+
+    .btn.btn-link {
+        @apply text-blue-600 px-1.5 py-0 rounded-none shadow-none;
+        @apply hover:underline;
+        @apply focus:outline-none focus:ring-0 focus:underline focus:bg-blue-600/10;
+        @apply disabled:text-blue-300 disabled:no-underline;
+    }
+
+    .btn.btn-link.positive {
+        @apply text-valid px-1.5 py-0 rounded-none shadow-none;
+        @apply hover:underline;
+        @apply focus:outline-none focus:ring-0 focus:underline focus:bg-valid/10;
+        @apply disabled:text-valid/50 disabled:no-underline;
+    }
+
+    .btn.btn-link.negative {
+        @apply text-error px-1.5 py-0 rounded-none shadow-none;
+        @apply hover:underline;
+        @apply focus:outline-none focus:ring-0 focus:underline focus:bg-error/10;
+        @apply disabled:text-error/50 disabled:no-underline;
+    }
+
+    .btn.btn-link.black {
+        @apply text-default-800 px-1.5 py-0 rounded-none shadow-none;
+        @apply hover:underline;
+        @apply focus:outline-none focus:ring-0 focus:underline focus:bg-default-800/10;
+        @apply disabled:text-default-800/50 disabled:no-underline;
+    }
+
+    .btn.btn-sm.btn-icon.btn-link,
+    .btn.btn-md.btn-icon.btn-link,
+    .btn.btn-lg.btn-icon.btn-link {
+        @apply px-0.5 py-0;
+    }
+
+    .btn.btn-positive {
+        @apply bg-valid text-default-50;
+        @apply hover:bg-valid/90;
+        @apply active:bg-valid/80;
+        @apply focus:ring-valid/50;
+        @apply disabled:bg-valid/50
+    }
+
+    .btn.btn-negative {
+        @apply bg-error text-default-50;
+        @apply hover:bg-error/90;
+        @apply active:bg-error/80;
+        @apply focus:ring-error/50;
+        @apply disabled:bg-error/50
+    }
+
+    /* Fill Lucide icons */
+    .lucide.filled {
+        fill: currentColor;
+    }
+}
