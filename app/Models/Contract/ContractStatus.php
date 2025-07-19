@@ -38,12 +38,14 @@ class ContractStatus extends Model
         'name',
         'value',
         'color',
+        'conditions',
     ];
 
     protected $casts = [
         'name' => 'string',
         'value' => 'integer',
         'color' => 'string',
+        'conditions' => 'array',
     ];
 
     private static int $inProgressValue = 2;

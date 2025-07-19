@@ -1,4 +1,4 @@
-@php use App\Models\User;use Illuminate\Support\Facades\Route;use Illuminate\Support\Str;use App\Models\Ticket;use App\Models\Contract; @endphp
+@php use App\Models\User;use Carbon\Carbon;use Illuminate\Support\Facades\Route;use Illuminate\Support\Str;use App\Models\Ticket;use App\Models\Contract; @endphp
 @props([
     'data',
     'edit' => false,
@@ -45,13 +45,59 @@
 
     @switch(get_class($data))
 
-        @case(Contract\ContractStatus::class)
         @case(Ticket\TicketCriticality::class)
         @case(Ticket\TicketPriority::class)
         @case(Ticket\TicketStatus::class)
             <!-- Value -->
             <x-table.element>
                 <div class="flex items-center justify-center">{{ $data->value }}</div>
+            </x-table.element>
+
+            <!-- Color -->
+            <x-table.element.label :color="$data->color">
+                {{ $data->color }}
+            </x-table.element.label>
+            @break
+
+        @case(Contract\ContractStatus::class)
+            <!-- Value -->
+            <x-table.element>
+                <div class="flex items-center justify-center">{{ $data->value }}</div>
+            </x-table.element>
+
+            <!-- Conditions -->
+            <x-table.element>
+                @empty($data->conditions)
+                    <p class="italic">Aucune Condition</p>
+                @else
+                    @foreach($data->conditions as $column => $infos)
+                        <p class="text-xs">
+                            {{ Str::of($column)->replace('_', ' ')->title() }} :
+                            <span class="font-semibold">
+                                @isset($infos['condition'])
+                                    {{ $infos['condition'] }}
+                                @endisset
+
+                                @isset($infos['value'])
+                                    @if(Carbon::hasFormat($infos['value'], 'Y-m-d\TH:i'))
+                                        {{ Carbon::parse($infos['value'])->format('Y-m-d H:i') }}
+                                    @else
+                                        {{ $infos['value'] }}%
+                                    @endif
+                                @else
+                                    Moment de comparaison
+                                @endisset
+
+                                @switch($infos['logic'] ?? null)
+                                    @case('&&') - « ET » @break
+                                    @case('||') - « OU » @break
+                                @endswitch
+                            </span>
+                        </p>
+
+                    @endforeach
+                @endempty
+                {{--                @dump(count($data->conditions))--}}
             </x-table.element>
 
             <!-- Color -->

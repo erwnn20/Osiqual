@@ -42,7 +42,35 @@ class StatusController extends Controller
     {
         $credentials = $request->validated();
 
-        $status = Contract\ContractStatus::create($credentials);
+        $conditions = [
+            'duration' => [
+                'condition' =>
+                    ($credentials['duration-condition'] ?? '') .
+                    ($credentials['duration-condition-equal'] ?? ''),
+                'logic' => $credentials['duration-logic'] ?? null,
+                'value' => $credentials['duration-value'] ?? null
+            ],
+            'start_date' => [
+                'condition' =>
+                    ($credentials['start-condition'] ?? '') .
+                    ($credentials['start-condition-equal'] ?? ''),
+                'value' => $credentials['start-value'] ?? null,
+            ],
+            'end_date' => [
+                'condition' =>
+                    ($credentials['end-condition'] ?? '') .
+                    ($credentials['end-condition-equal'] ?? ''),
+                'value' => $credentials['end-value'] ?? null,
+            ],
+        ];
+
+        $status = Contract\ContractStatus::create([
+            'name' => $credentials['name'],
+            'value' => $credentials['value'],
+            'color' => $credentials['color'],
+            'conditions' => array_filter($conditions,
+                fn ($condition) => !empty($condition['condition'])),
+        ]);
 
         return back()->with('success', "Le status de contrat '$status->name' a été créé avec succès.");
     }
@@ -70,7 +98,35 @@ class StatusController extends Controller
         $status = Contract\ContractStatus::findOrFail($id);
         $credentials = $request->validated();
 
-        $status->update($credentials);
+        $conditions = [
+            'duration' => [
+                'condition' =>
+                    ($credentials['duration-condition'] ?? '') .
+                    ($credentials['duration-condition-equal'] ?? ''),
+                'logic' => $credentials['duration-logic'] ?? null,
+                'value' => $credentials['duration-value'] ?? null
+            ],
+            'start_date' => [
+                'condition' =>
+                    ($credentials['start-condition'] ?? '') .
+                    ($credentials['start-condition-equal'] ?? ''),
+                'value' => $credentials['start-value'] ?? null,
+            ],
+            'end_date' => [
+                'condition' =>
+                    ($credentials['end-condition'] ?? '') .
+                    ($credentials['end-condition-equal'] ?? ''),
+                'value' => $credentials['end-value'] ?? null,
+            ],
+        ];
+
+        $status->update([
+            'name' => $credentials['name'],
+            'value' => $credentials['value'],
+            'color' => $credentials['color'],
+            'conditions' => array_filter($conditions,
+                fn ($condition) => !empty($condition['condition'])),
+        ]);
 
         return back()->with('success', "Le status de contrat '$status->name' a été mis à jour avec succès.");
     }

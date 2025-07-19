@@ -77,7 +77,6 @@ class Contract extends Model
 
     protected $fillable = [
         'company_id',
-        'parent_contract_id',
         'start_date',
         'end_date',
         'status_id',
@@ -86,7 +85,6 @@ class Contract extends Model
 
     protected $casts = [
         'company_id' => 'string',
-        'parent_contract_id' => 'string',
         'start_date' => 'datetime',
         'end_date' => 'datetime',
         'status_id' => 'string',

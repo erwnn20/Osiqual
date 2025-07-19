@@ -21,6 +21,7 @@
 @php $min = is_numeric($min) ? $min : 0 @endphp
 @php $value = is_numeric($value) ? $value : $min + ($max - $min) * 0.5 @endphp
 @php $max = is_numeric($max) ? $max : $min + 100 @endphp
+@php if($readonly) $data['readonly'] = $readonly @endphp
 
 <div id="{{ $name .'-container' }}" {{ $attributes->class(['flex', 'flex-col', 'gap-1']) }}>
 
@@ -93,7 +94,7 @@
 
            class="appearance-none
                   w-full h-3 rounded-lg
-                  @if($disabled) disabled:opacity-50 @endif disabled:pointer-events-none
+                  @if(!$readonly) disabled:opacity-50 @endif disabled:pointer-events-none
                   focus:outline-none
 
                   [&::-webkit-slider-thumb]:appearance-none
@@ -140,6 +141,10 @@
                     const label = container.querySelector('.label-container');
                     const margin = (percent / 100 * (container.offsetWidth - output.offsetWidth));
                     output.style.marginLeft = `${Math.max(margin, label.offsetWidth)}px`;
+
+                    if (range.disabled && !range.dataset.readonly)
+                        output.classList.add('hidden');
+                    else output.classList.remove('hidden');
                 }
 
                 document.addEventListener('DOMContentLoaded', () =>

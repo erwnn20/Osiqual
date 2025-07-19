@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('name')->unique();
             $table->integer('value')->unique();
             $table->string('color', 7)->unique();
+            $table->json('conditions');
         });
     }
 

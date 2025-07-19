@@ -12,8 +12,12 @@
     'readonly' => false,
     'required' => false,
 
-    'checked' => false,
+    'checked' => null,
 ])
+
+@if($checked === null)
+    @php $checked = old($name) === (string) $value @endphp
+@endif
 
 <label id="{{ $name .'-container' }}"
        for="{{ $name }}"
@@ -50,7 +54,7 @@
     <span class="absolute
                  w-4 h-4 rounded-sm p-0.5
                  bg-primary peer-hover:bg-primary/80 peer-active:bg-primary/70
-                 opacity-0 peer-checked:opacity-100 @if($disabled) peer-disabled:opacity-50 @endif
+                 opacity-0 peer-checked:opacity-100 @if(!$readonly) peer-disabled:opacity-50 @endif
                  transition-all duration-200 pointer-events-none">
         <i class="h-full w-full text-white stroke-3" data-lucide="check"></i>
     </span>

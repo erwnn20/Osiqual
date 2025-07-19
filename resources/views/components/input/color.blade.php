@@ -46,7 +46,7 @@
                   @else ring-default-300 focus:ring-primary @endif
 
                   transition-all duration-200 cursor-pointer
-                  @if($disabled) disabled:opacity-65 @endif disabled:pointer-events-none
+                  @if(!$readonly) disabled:opacity-65 @endif disabled:pointer-events-none
                   focus:outline-none
 
                   [&::-webkit-color-swatch-wrapper]:p-0

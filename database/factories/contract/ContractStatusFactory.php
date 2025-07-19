@@ -36,6 +36,7 @@ class ContractStatusFactory extends Factory
                     'name' => $name,
                     'value' => $value,
                     'color' => $color,
+                    'conditions' => [],
                 ];
             }
         }
@@ -49,6 +50,7 @@ class ContractStatusFactory extends Factory
             'name' => 'Status ' . $value,
             'value' => $value,
             'color' => $defaultColor,
+            'conditions' => [],
         ];
     }
 }
