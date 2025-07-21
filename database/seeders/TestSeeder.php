@@ -65,17 +65,24 @@ class TestSeeder extends Seeder
             'active' => 0
         ]); // block
         User::factory(6)->create();
+        dump('users ok');
 
         User::where('role_id', $client->id)->get()
             ->each(function ($user) {
                 Contract::factory(3)->create([
                     'company_id' => $user->company->id,
                 ]);
-        });
+            });
+        dump('contracts ok');
 
-        $ticketNumber = 25;
-        Ticket::factory($ticketNumber)->create();
+        $ticketNumber = 50;
+        foreach (range(1, $ticketNumber) as $_) {
+            Ticket::factory()->create();
+        }
+        dump('tickets ok');
+
         TicketStep::factory($ticketNumber * 3)->create();
+        dump('steps ok');
 
         dump('ok');
     }

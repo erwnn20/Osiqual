@@ -56,7 +56,7 @@ class TicketFactory extends Factory
             $endedAt?->setTime($endedAt->format('H'), $endedAt->format('i'));
 
             $contract = $client->company->currentContract(Carbon::instance($createdAt));
-        } while (is_null($contract) || $contract->type->duration - $contract->durationUsed() < $duration);
+        } while (is_null($contract) || $contract->durationRemaining() < $duration);
 
         return [
             'technician_id' => fake()->boolean(75) ? $technician?->id : null,
