@@ -54,7 +54,6 @@ class Contract extends Model
                         'company_id' => $model->company->id,
                         'start_date' => $month->copy()->startOfMonth(),
                         'end_date' => $month->copy()->endOfMonth(),
-                        'status_id' => $model->status->id,
                         'type_id' => Contract\ContractType::firstOrCreate(
                             ['duration' => $model->type->duration, 'monthly' => false]
                         )->id,
@@ -79,7 +78,6 @@ class Contract extends Model
         'company_id',
         'start_date',
         'end_date',
-        'status_id',
         'type_id',
     ];
 
@@ -87,7 +85,6 @@ class Contract extends Model
         'company_id' => 'string',
         'start_date' => 'datetime',
         'end_date' => 'datetime',
-        'status_id' => 'string',
         'type_id' => 'string',
     ];
 
@@ -96,9 +93,17 @@ class Contract extends Model
         return $this->belongsTo(Company::class);
     }
 
-    public function status(): BelongsTo
+    public function status(): ContractStatus
     {
-        return $this->belongsTo(ContractStatus::class, 'status_id');
+        $statuses = ContractStatus::orderByDesc('value')->get();
+
+        return $statuses->first(fn($status) => $status->check($this))
+            ?? $statuses->last();
+    }
+
+    public function getStatusAttribute(): ContractStatus
+    {
+        return $this->status();
     }
 
     public function type(): BelongsTo
@@ -147,4 +152,10 @@ class Contract extends Model
                 ->orWhere('parent_contract_id', $this->parent_contract_id);
         })->where('id', '!=', $this->id);
     }
+
+    public function getConsumptionAttribute(): float
+    {
+        return $this->durationUsed() / $this->type->duration;
+    }
+
 }

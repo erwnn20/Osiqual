@@ -8,6 +8,7 @@ use App\Models\Contract;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class StatusController extends Controller
 {
@@ -42,34 +43,11 @@ class StatusController extends Controller
     {
         $credentials = $request->validated();
 
-        $conditions = [
-            'duration' => [
-                'condition' =>
-                    ($credentials['duration-condition'] ?? '') .
-                    ($credentials['duration-condition-equal'] ?? ''),
-                'logic' => $credentials['duration-logic'] ?? null,
-                'value' => $credentials['duration-value'] ?? null
-            ],
-            'start_date' => [
-                'condition' =>
-                    ($credentials['start-condition'] ?? '') .
-                    ($credentials['start-condition-equal'] ?? ''),
-                'value' => $credentials['start-value'] ?? null,
-            ],
-            'end_date' => [
-                'condition' =>
-                    ($credentials['end-condition'] ?? '') .
-                    ($credentials['end-condition-equal'] ?? ''),
-                'value' => $credentials['end-value'] ?? null,
-            ],
-        ];
-
         $status = Contract\ContractStatus::create([
             'name' => $credentials['name'],
             'value' => $credentials['value'],
             'color' => $credentials['color'],
-            'conditions' => array_filter($conditions,
-                fn ($condition) => !empty($condition['condition'])),
+            'conditions' => Contract\ContractStatus::createConditions($credentials),
         ]);
 
         return back()->with('success', "Le status de contrat '$status->name' a été créé avec succès.");
@@ -78,11 +56,22 @@ class StatusController extends Controller
     public function edit(Request $request, string $id): View
     {
         $user = $request->user();
+        $status = Contract\ContractStatus::findOrFail($id);
+        $contracts = Contract::all()->filter(fn($contract) => $contract->status->id === $status->id)->values();
+
+        $page = request('page', 1);
+        $perPage = 10;
 
         return view('object.status.edit', [
-            'status' => $status = Contract\ContractStatus::findOrFail($id),
+            'status' => $status,
             'linked' => [
-                'data' => Contract::where('status_id', $status->id)->paginate(5),
+                'data' => new LengthAwarePaginator(
+                    $contracts->forPage($page, $perPage),
+                    $contracts->count(),
+                    $perPage,
+                    $page,
+                    ['path' => request()->url(), 'query' => request()->query()]
+                ),
                 'title' => 'Contrats liés',
                 'error' => 'Aucun Contrat lié',
                 'edit' => $user->role->permission_admin,
@@ -98,34 +87,11 @@ class StatusController extends Controller
         $status = Contract\ContractStatus::findOrFail($id);
         $credentials = $request->validated();
 
-        $conditions = [
-            'duration' => [
-                'condition' =>
-                    ($credentials['duration-condition'] ?? '') .
-                    ($credentials['duration-condition-equal'] ?? ''),
-                'logic' => $credentials['duration-logic'] ?? null,
-                'value' => $credentials['duration-value'] ?? null
-            ],
-            'start_date' => [
-                'condition' =>
-                    ($credentials['start-condition'] ?? '') .
-                    ($credentials['start-condition-equal'] ?? ''),
-                'value' => $credentials['start-value'] ?? null,
-            ],
-            'end_date' => [
-                'condition' =>
-                    ($credentials['end-condition'] ?? '') .
-                    ($credentials['end-condition-equal'] ?? ''),
-                'value' => $credentials['end-value'] ?? null,
-            ],
-        ];
-
         $status->update([
             'name' => $credentials['name'],
             'value' => $credentials['value'],
             'color' => $credentials['color'],
-            'conditions' => array_filter($conditions,
-                fn ($condition) => !empty($condition['condition'])),
+            'conditions' => Contract\ContractStatus::createConditions($credentials),
         ]);
 
         return back()->with('success', "Le status de contrat '$status->name' a été mis à jour avec succès.");

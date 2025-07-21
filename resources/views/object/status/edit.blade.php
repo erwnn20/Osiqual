@@ -1,5 +1,6 @@
 ﻿@php
-    use App\Models\Contract;use App\Models\Ticket;use App\Models\User;use Illuminate\Support\Facades\Auth;use Illuminate\Support\Facades\Route;use Illuminate\Support\Str; @endphp
+    use App\Models\Contract;use App\Models\Ticket;use App\Models\User;use Illuminate\Pagination\LengthAwarePaginator;use Illuminate\Support\Facades\Auth;use Illuminate\Support\Facades\Route;use Illuminate\Support\Str;
+@endphp
 
 @props([
     'status',
@@ -152,71 +153,13 @@
                                              name=""
                                     />
                                     <div class="grid grid-cols-3 gap-2.5">
-                                        <x-input.fieldset legend="Durée du Contrat">
-                                            <div class="flex justify-between">
-                                                <div class="flex flex-col gap-3">
-                                                    @php
-                                                        $conditions = $status->conditions['duration'] ?? null;
-                                                        $condition = $conditions['condition'] ?? null;
-                                                        $logic = $conditions['logic'] ?? null;
-                                                        $value = $conditions['value'] ?? null;
-                                                    @endphp
-                                                    <x-input type="radio"
-                                                             name="duration-condition"
-                                                             label="Aucune"
-                                                             :error="$errors->first('duration-condition')"
-                                                             :checked="empty(old('duration-condition', $condition))"
-                                                    />
-                                                    <x-input type="radio"
-                                                             name="duration-condition"
-                                                             label="Inférieur à (<)"
-                                                             value="<"
-                                                             :error="$errors->first('duration-condition')"
-                                                             :checked="Str::contains(old('duration-condition', $condition), '<')"
-                                                    />
-                                                    <x-input type="checkbox"
-                                                             name="duration-condition-equal"
-                                                             label="Égale à (=)"
-                                                             value="="
-                                                             :error="$errors->first('duration-condition-equal')"
-                                                             :checked="Str::contains(old('duration-condition-equal', $condition), '=')"
-                                                    />
-                                                    <x-input type="radio"
-                                                             name="duration-condition"
-                                                             label="Supérieur à (>)"
-                                                             value=">"
-                                                             :error="$errors->first('duration-condition')"
-                                                             :checked="Str::contains(old('duration-condition', $condition), '>')"
-                                                    />
-                                                </div>
-                                                <x-input type="select"
-                                                         name="duration-logic"
-                                                         :value="old('duration-logic', $logic)"
-                                                         :error="$errors->first('duration-logic')"
-                                                         :options="[
-                                                                     ['value' => '&&', 'label' => 'ET'],
-                                                                     ['value' => '||', 'label' => 'OU'],
-                                                                   ]"
-                                                />
-                                            </div>
-                                            <x-input type="range"
-                                                     name="duration-value"
-                                                     label="Part du Contrat (%)"
-                                                     :value="old('duration-value', $value)"
-                                                     :error="$errors->first('duration-value')"
-                                                     required
-
-                                                     :min="0"
-                                                     :max="100"
-                                                     :step="5"
-                                                     class="mt-1"
-                                            />
-                                        </x-input.fieldset>
                                         <x-input.fieldset legend="Debut du Contrat">
                                             @php
-                                                $conditions = $status->conditions['start_date'] ?? null;
+                                                $conditions = $status->conditions['start'] ?? null;
                                                 $condition = $conditions['condition'] ?? null;
                                                 $value = $conditions['value'] ?? null;
+                                                $column = $conditions['column'] ?? null;
+                                                $type = $conditions['type'] ?? null;
                                             @endphp
                                             <x-input type="radio"
                                                      name="start-condition"
@@ -253,12 +196,24 @@
                                                      :error="$errors->first('start-value')"
                                                      class="mt-1"
                                             />
+                                            <x-input type="hidden"
+                                                     name="start-column"
+                                                     :value="$column"
+                                                     :error="$errors->first('start-column')"
+                                            />
+                                            <x-input type="hidden"
+                                                     name="start-type"
+                                                     :value="$type"
+                                                     :error="$errors->first('start-type')"
+                                            />
                                         </x-input.fieldset>
                                         <x-input.fieldset legend="Fin du Contrat">
                                             @php
-                                                $conditions = $status->conditions['end_date'] ?? null;
+                                                $conditions = $status->conditions['end'] ?? null;
                                                 $condition = $conditions['condition'] ?? null;
                                                 $value = $conditions['value'] ?? null;
+                                                $column = $conditions['column'] ?? null;
+                                                $type = $conditions['type'] ?? null;
                                             @endphp
                                             <x-input type="radio"
                                                      name="end-condition"
@@ -294,6 +249,88 @@
                                                      assistiveText="Laisser vide pour comparer à la date du moment."
                                                      :error="$errors->first('end-value')"
                                                      class="mt-1"
+                                            />
+                                            <x-input type="hidden"
+                                                     name="end-column"
+                                                     :value="$column"
+                                                     :error="$errors->first('end-column')"
+                                            />
+                                            <x-input type="hidden"
+                                                     name="end-type"
+                                                     :value="$type"
+                                                     :error="$errors->first('end-type')"
+                                            />
+                                        </x-input.fieldset>
+                                        <x-input.fieldset legend="Durée du Contrat">
+                                            <div class="flex justify-between">
+                                                <div class="flex flex-col gap-3">
+                                                    @php
+                                                        $conditions = $status->conditions['consumption'] ?? null;
+                                                        $condition = $conditions['condition'] ?? null;
+                                                        $logic = $conditions['logic'] ?? null;
+                                                        $value = $conditions['value'] ?? null;
+                                                        $column = $conditions['column'] ?? null;
+                                                        $type = $conditions['type'] ?? null;
+                                                    @endphp
+                                                    <x-input type="radio"
+                                                             name="consumption-condition"
+                                                             label="Aucune"
+                                                             :error="$errors->first('consumption-condition')"
+                                                             :checked="empty(old('consumption-condition', $condition))"
+                                                    />
+                                                    <x-input type="radio"
+                                                             name="consumption-condition"
+                                                             label="Inférieur à (<)"
+                                                             value="<"
+                                                             :error="$errors->first('consumption-condition')"
+                                                             :checked="Str::contains(old('consumption-condition', $condition), '<')"
+                                                    />
+                                                    <x-input type="checkbox"
+                                                             name="consumption-condition-equal"
+                                                             label="Égale à (=)"
+                                                             value="="
+                                                             :error="$errors->first('consumption-condition-equal')"
+                                                             :checked="Str::contains(old('consumption-condition-equal', $condition), '=')"
+                                                    />
+                                                    <x-input type="radio"
+                                                             name="consumption-condition"
+                                                             label="Supérieur à (>)"
+                                                             value=">"
+                                                             :error="$errors->first('consumption-condition')"
+                                                             :checked="Str::contains(old('consumption-condition', $condition), '>')"
+                                                    />
+                                                </div>
+                                                <x-input type="select"
+                                                         name="consumption-logic"
+                                                         :value="old('consumption-logic', $logic)"
+                                                         :error="$errors->first('consumption-logic')"
+                                                         :options="[
+                                                                     ['value' => '&&', 'label' => 'ET'],
+                                                                     ['value' => '||', 'label' => 'OU'],
+                                                                   ]"
+                                                />
+                                            </div>
+                                            <x-input type="range"
+                                                     name="consumption-value"
+                                                     label="Part du Contrat (%)"
+                                                     :value="old('consumption-value', $value)"
+                                                     :error="$errors->first('consumption-value')"
+                                                     required
+
+                                                     :min="0"
+                                                     :max="100"
+                                                     :step="5"
+                                                     class="mt-1"
+                                            />
+                                            <x-input type="hidden"
+                                                     name="consumption-column"
+                                                     :value="$column"
+                                                     :error="$errors->first('consumption-column')"
+                                            />
+                                            <x-input type="hidden"
+                                                     name="consumption-type"
+                                                     :value="$type"
+                                                     :error="$errors->first('consumption-type')"
                                             />
                                         </x-input.fieldset>
 

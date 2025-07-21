@@ -180,55 +180,6 @@
                                              name=""
                                     />
                                     <div class="grid grid-cols-3 gap-2.5">
-                                        <x-input.fieldset legend="Durée du Contrat">
-                                            <div class="flex justify-between">
-                                                <div class="flex flex-col gap-3">
-                                                    <x-input type="radio"
-                                                             name="duration-condition"
-                                                             label="Aucune"
-                                                             :error="$errors->first('duration-condition')"
-                                                             :checked="empty(old('duration-condition'))"
-                                                    />
-                                                    <x-input type="radio"
-                                                             name="duration-condition"
-                                                             label="Inférieur à (<)"
-                                                             value="<"
-                                                             :error="$errors->first('duration-condition')"
-                                                    />
-                                                    <x-input type="checkbox"
-                                                             name="duration-condition-equal"
-                                                             label="Égale à (=)"
-                                                             value="="
-                                                             :error="$errors->first('duration-condition-equal')"
-                                                    />
-                                                    <x-input type="radio"
-                                                             name="duration-condition"
-                                                             label="Supérieur à (>)"
-                                                             value=">"
-                                                             :error="$errors->first('duration-condition')"
-                                                    />
-                                                </div>
-                                                <x-input type="select"
-                                                         name="duration-logic"
-                                                         :value="old('duration-logic')"
-                                                         :error="$errors->first('duration-logic')"
-                                                         :options="[['value' => '&&', 'label' => 'ET'],
-                                                                    ['value' => '||', 'label' => 'OU']]"
-                                                />
-                                            </div>
-                                            <x-input type="range"
-                                                     name="duration-value"
-                                                     label="Part du Contrat (%)"
-                                                     :value="old('duration-value')"
-                                                     :error="$errors->first('duration-value')"
-                                                     required
-
-                                                     :min="0"
-                                                     :max="100"
-                                                     :step="5"
-                                                     class="mt-1"
-                                            />
-                                        </x-input.fieldset>
                                         <x-input.fieldset legend="Debut du Contrat">
                                             <x-input type="radio"
                                                      name="start-condition"
@@ -261,6 +212,16 @@
                                                      assistiveText="Laisser vide pour comparer à la date du moment."
                                                      :error="$errors->first('start-value')"
                                                      class="mt-1"
+                                            />
+                                            <x-input type="hidden"
+                                                     name="start-column"
+                                                     value="start_date"
+                                                     :error="$errors->first('start-column')"
+                                            />
+                                            <x-input type="hidden"
+                                                     name="start-type"
+                                                     value="date"
+                                                     :error="$errors->first('start-type')"
                                             />
                                         </x-input.fieldset>
                                         <x-input.fieldset legend="Fin du Contrat">
@@ -295,6 +256,70 @@
                                                      assistiveText="Laisser vide pour comparer à la date du moment."
                                                      :error="$errors->first('end-value')"
                                                      class="mt-1"
+                                            />
+                                            <x-input type="hidden"
+                                                     name="end-column"
+                                                     value="end_date"
+                                                     :error="$errors->first('end-column')"
+                                            />
+                                            <x-input type="hidden"
+                                                     name="end-type"
+                                                     value="date"
+                                                     :error="$errors->first('end-type')"
+                                            />
+                                        </x-input.fieldset>
+                                        <x-input.fieldset legend="Consommation du Contrat">
+                                            <div class="flex justify-between">
+                                                <div class="flex flex-col gap-3">
+                                                    <x-input type="radio"
+                                                             name="consumption-condition"
+                                                             label="Aucune"
+                                                             :error="$errors->first('consumption-condition')"
+                                                             :checked="empty(old('consumption-condition'))"
+                                                    />
+                                                    <x-input type="radio"
+                                                             name="consumption-condition"
+                                                             label="Inférieur à (<)"
+                                                             value="<"
+                                                             :error="$errors->first('consumption-condition')"
+                                                    />
+                                                    <x-input type="checkbox"
+                                                             name="consumption-condition-equal"
+                                                             label="Égale à (=)"
+                                                             value="="
+                                                             :error="$errors->first('consumption-condition-equal')"
+                                                    />
+                                                    <x-input type="radio"
+                                                             name="consumption-condition"
+                                                             label="Supérieur à (>)"
+                                                             value=">"
+                                                             :error="$errors->first('consumption-condition')"
+                                                    />
+                                                </div>
+                                                <x-input type="select"
+                                                         name="consumption-logic"
+                                                         :value="old('consumption-logic')"
+                                                         :error="$errors->first('consumption-logic')"
+                                                         :options="[['value' => '&&', 'label' => 'ET'],
+                                                                    ['value' => '||', 'label' => 'OU']]"
+                                                />
+                                            </div>
+                                            <x-input type="range"
+                                                     name="consumption-value"
+                                                     label="Part du Contrat Consommé (%)"
+                                                     :value="old('consumption-value')"
+                                                     :error="$errors->first('consumption-value')"
+                                                     required
+
+                                                     :min="0"
+                                                     :max="100"
+                                                     :step="5"
+                                                     class="mt-1"
+                                            />
+                                            <x-input type="hidden"
+                                                     name="consumption-type"
+                                                     value="percent"
+                                                     :error="$errors->first('consumption-type')"
                                             />
                                         </x-input.fieldset>
 

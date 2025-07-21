@@ -24,14 +24,12 @@ class ContractFactory extends Factory
     {
         $company = Company::inRandomOrder()->first() ?? Company::factory()->create();
         $type = ContractType::inRandomOrder()->first() ?? ContractType::factory()->create();
-        $status = ContractStatus::inRandomOrder()->first() ?? ContractStatus::factory()->create();
-        $startDate = fake()->dateTimeBetween('-2 year');
+        $startDate = fake()->dateTimeBetween('-2 years', '+2 years');
 
         return [
             'company_id' => $company->id,
             'start_date' => $startDate,
-            'end_date' => $type->monthly ? fake()->dateTimeBetween($startDate, '+6 month') : null,
-            'status_id' => $status->id,
+            'end_date' => $type->monthly ? fake()->dateTimeBetween($startDate, (clone $startDate)->modify('+6 month')) : null,
             'type_id' => $type->id,
         ];
     }

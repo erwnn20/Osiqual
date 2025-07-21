@@ -66,13 +66,16 @@ class Company extends Model
 
     public function currentContract(?Carbon $datetime = null): ?Contract
     {
-        $datetime ??= now();
-
         return $this->contracts()
-            ->where('status_id', ContractStatus::inProgress()->id)
-            ->where('start_date', '<=', $datetime)
-            ->where('end_date', '>=', $datetime)
+            ->when($datetime, function ($query) use ($datetime) {
+                $query->where('start_date', '<=', $datetime)
+                    ->where(function ($q) use ($datetime) {
+                        $q->whereNull('end_date')
+                            ->orWhere('end_date', '>=', $datetime);
+                    });
+            })
             ->get()
+            ->filter(fn($contract) => $datetime || $contract->status->id === ContractStatus::inProgress()->id)
             ->filter(fn($contract) => !$contract->isParent())
             ->first();
     }

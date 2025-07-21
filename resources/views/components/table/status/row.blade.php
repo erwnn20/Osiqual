@@ -10,34 +10,27 @@
 
     <!-- Number of appearances -->
     @php
-        $appearances = [
-            Ticket\TicketStatus::class => [
-                'class' => Ticket::class,
-                'table_id' => 'status_id'
-            ],
-            Ticket\TicketPriority::class => [
-                'class' => Ticket::class,
-                'table_id' => 'priority_id'
-            ],
-            Ticket\TicketCriticality::class => [
-                'class' => Ticket::class,
-                'table_id' => 'criticality_id'
-            ],
-            Contract\ContractStatus::class => [
-                'class' => Contract::class,
-                'table_id' => 'status_id'
-            ],
-            Contract\ContractType::class => [
-                'class' => Contract::class,
-                'table_id' => 'type_id'
-            ],
-            User\Role::class => [
-                'class' => User::class,
-                'table_id' => 'role_id'
-            ],
-        ];
+        $number = match (get_class($data)) {
+            Ticket\TicketStatus::class =>
+                Ticket::where('status_id', $data->id)->count(),
 
-        $number = $appearances[get_class($data)]['class']::where($appearances[get_class($data)]['table_id'], $data->id)->count();
+            Ticket\TicketPriority::class =>
+                Ticket::where('priority_id', $data->id)->count(),
+
+            Ticket\TicketCriticality::class =>
+                Ticket::where('criticality_id', $data->id)->count(),
+
+            Contract\ContractStatus::class =>
+                Contract::all()->filter(fn($contract) => $contract->status->id === $data->id)->count(),
+
+            Contract\ContractType::class =>
+                Contract::where('type_id', $data->id)->count(),
+
+            User\Role::class =>
+                User::where('role_id', $data->id)->count(),
+
+            default => 0,
+        };
     @endphp
     <x-table.element.label color="#808080" class="flex items-center justify-end">
         {{ $number }}
@@ -97,7 +90,6 @@
 
                     @endforeach
                 @endempty
-                {{--                @dump(count($data->conditions))--}}
             </x-table.element>
 
             <!-- Color -->

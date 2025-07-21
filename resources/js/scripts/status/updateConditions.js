@@ -1,5 +1,5 @@
 ﻿const radioNames = [
-    ['duration', updateConditionDuration],
+    ['consumption', updateConditionDuration],
     ['start', updateConditionDefault],
     ['end', updateConditionDefault],
 ];
