@@ -109,8 +109,7 @@ class TicketController extends Controller
         $duration = $credentials['duration'] ?? 0;
 
         $client = User::find($credentials['client']);
-        $company = $client->company;
-        $contract = $company->currentContract($creationDate);
+        $contract = $client->company->currentContract($creationDate);
 
         if (!$contract) {
             return back()->withErrors([
@@ -129,8 +128,6 @@ class TicketController extends Controller
         $ticket = Ticket::create([
             'technician_id' => $credentials['technician'] ?? null,
             'client_id' => $client->id,
-            'company_id' => $company->id,
-            'contract_id' => $contract->id,
             'title' => $credentials['title'],
             'description' => $credentials['description'] ?? null,
             'duration' => $duration,
@@ -150,9 +147,8 @@ class TicketController extends Controller
         $user = $request->user();
         $credentials = $request->validated();
 
-        $company = $user->company;
         $creationDate = now()->setTime(Carbon::now()->hour, Carbon::now()->minute);
-        $contract = $company->currentContract($creationDate);
+        $contract = $user->company->currentContract($creationDate);
 
         if (!$contract) {
             return back()->withErrors([
@@ -162,8 +158,6 @@ class TicketController extends Controller
 
         $ticket = Ticket::create([
             'client_id' => $user->id,
-            'company_id' => $company->id,
-            'contract_id' => $contract->id,
             'title' => $credentials['title'],
             'description' => $credentials['description'],
             'status_id' => Ticket\TicketStatus::all()
@@ -209,9 +203,7 @@ class TicketController extends Controller
         $credentials = $request->validated();
 
         $duration = $credentials['duration'] ?? 0;
-        $creationDate = Carbon::parse($ticket->creation_date);
-
-        $contract = $ticket->company->currentContract($creationDate);
+        $contract = $ticket->contract;
 
         if ($contract->durationRemaining() < $duration) {
             return back()->withErrors([

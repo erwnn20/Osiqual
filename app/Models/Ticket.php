@@ -27,6 +27,12 @@ class Ticket extends Model
         parent::boot();
 
         static::creating(function ($model) {
+            if (empty($model->company_id))
+                $model->company_id = $model->client->company->id;
+
+            if (empty($model->contract_id))
+                $model->contract_id = $model->company->currentContract($model->creation_date)->id;
+
         });
 
         static::updating(function ($model) {
@@ -43,8 +49,6 @@ class Ticket extends Model
     protected $fillable = [
         'technician_id',
         'client_id',
-        'company_id',
-        'contract_id',
         'title',
         'description',
         'duration',

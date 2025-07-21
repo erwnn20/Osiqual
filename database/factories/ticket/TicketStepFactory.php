@@ -36,7 +36,7 @@ class TicketStepFactory extends Factory
             'ticket_id' => $ticket->id,
             'technician_id' => $technician->id,
             'description' => fake()->paragraph(),
-            'date' => fake()->dateTimeBetween($ticket->creation_date, $ticket->end_date ?? 'now'),
+            'date' => fake()->dateTimeBetween($ticket->creation_date, $ticket->end_date ?? (clone $ticket->creation_date)->modify('+7 days')),
         ];
     }
 }
