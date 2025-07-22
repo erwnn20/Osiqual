@@ -50,8 +50,6 @@ Route::prefix('/')->middleware(['auth', 'active'])->group(function () {
                 ->middleware('ticket.edit')->whereUuid('id');
             Route::patch('/edit/{id}', 'update')->name('edit')
                 ->middleware('ticket.edit')->whereUuid('id');
-            Route::patch('/edit/{id}/by-client', 'updateByClient')->name('edit.client')
-                ->middleware('ticket.edit')->whereUuid('id');
 
             Route::get('/view/{id}', 'view')->name('view')
                 ->middleware('ticket.view')->whereUuid('id');

@@ -104,7 +104,7 @@ class DashboardController extends Controller
                 'tickets' => [
                     'data' => $user->company->tickets()->orderBy('creation_date', 'desc')->limit(10)->get(),
                     'count' => $user->company->tickets()->count(),
-                    'edit' => true
+                    'edit' => false
                 ],
                 'contract' => $user->company->currentContract(),
                 /*'contracts' => [

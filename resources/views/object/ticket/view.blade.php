@@ -50,7 +50,7 @@
                         <x-input type="select"
                                  name="technician"
                                  label="Technicien"
-                                 placeholder="Sélectionnez un Technicien"
+                                 placeholder="Aucun Technicien"
                                  :value="old('technician', $ticket->technician_id)"
                                  :error="$errors->first('technician')"
                                  :options="$technicians"
