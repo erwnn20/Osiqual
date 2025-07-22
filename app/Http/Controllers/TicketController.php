@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\TicketClientRequest;
 use App\Http\Requests\TicketRequest;
 use App\Models\Company;
+use App\Models\Contract;
 use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Contracts\View\View;
@@ -15,6 +16,11 @@ use Symfony\Component\HttpFoundation\Response;
 
 class TicketController extends Controller
 {
+    /**
+     * Temps limite de contrat restant pour attribution à un ticket (en minute)
+     */
+    private static int $attributionTimeLimit = 10;
+
     public function index(Request $request): View
     {
         $user = $request->user();
@@ -46,7 +52,8 @@ class TicketController extends Controller
                 'title' => 'Tous les Tickets',
             ]);
         elseif ($user->role->permission_client) {
-            $remaining = $user->company->currentContract()?->durationRemaining() ?? 0;
+            $remaining = $user->company->currentContracts('attributable')
+                ->sum(fn(Contract $contract) => $contract->durationRemaining());
             $remainingHours = round($remaining / 60, 1);
 
             return view('object.index', [
@@ -104,22 +111,27 @@ class TicketController extends Controller
         $credentials = $request->validated();
 
         $creationDate = $credentials['creation']
-            ? Carbon::parse($credentials['creation'])
-            : now()->setTime(Carbon::now()->hour, Carbon::now()->minute);
+            ? Carbon::parse($credentials['creation'])->floorMinute()
+            : now()->floorMinute();
         $duration = $credentials['duration'] ?? 0;
 
         $client = User::find($credentials['client']);
-        $contract = $client->company->currentContract($creationDate);
 
-        if (!$contract) {
+        $companyContracts = $client->company->currentContracts('attributable', $creationDate);
+        $contract = $companyContracts->first(fn(Contract $contract) => $contract->durationRemaining() >= max($duration, self::$attributionTimeLimit));
+
+        if ($companyContracts->count() === 0) {
             return back()->withErrors([
                 'creation' => "L'entreprise sélectionnée n'a pas ce contrat à cette date.",
             ])->withInput(array_merge(request()->all(), [
                 'creation' => $creationDate,
             ]));
-        } elseif ($contract->durationRemaining() < $duration) {
+        } elseif (!$contract) {
+            $timeLimit = self::$attributionTimeLimit;
             return back()->withErrors([
-                'duration' => "Le contrat de l'entreprise sélectionnée à la date choisie ne dispose pas d'un temps restant suffisant.",
+                'duration' =>
+                    "Le contrat de l'entreprise sélectionnée ne dispose pas de contrat, à la date choisie, avec un temps restant suffisant."
+                    . ($duration < self::$attributionTimeLimit ? " (min: $timeLimit minutes)" : ''),
             ])->withInput(array_merge(request()->all(), [
                 'creation' => $creationDate,
             ]));
@@ -147,13 +159,25 @@ class TicketController extends Controller
         $user = $request->user();
         $credentials = $request->validated();
 
-        $creationDate = now()->setTime(Carbon::now()->hour, Carbon::now()->minute);
-        $contract = $user->company->currentContract($creationDate);
+        $creationDate = now()->floorMinute();
 
-        if (!$contract) {
+        $companyContracts = $user->company->currentContracts('attributable', $creationDate);
+        $contract = $companyContracts->first(fn(Contract $contract) => $contract->durationRemaining() >= self::$attributionTimeLimit);
+
+        if ($companyContracts->count() === 0) {
             return back()->withErrors([
-                'error' => "Votre entreprise n'a pas ce contrat pour la période en cours.",
-            ])->withInput();
+                'creation' => "Votre entreprise n'a pas ce contrat pour la période en cours.",
+            ])->withInput(array_merge(request()->all(), [
+                'creation' => $creationDate,
+            ]));
+        } elseif (!$contract) {
+            $timeLimit = self::$attributionTimeLimit;
+            return back()->withErrors([
+                'duration' =>
+                    "Votre entreprise n'a pas de contrat avec un temps restant suffisant pour la période en cours. (min: $timeLimit minutes)",
+            ])->withInput(array_merge(request()->all(), [
+                'creation' => $creationDate,
+            ]));
         }
 
         $ticket = Ticket::create([

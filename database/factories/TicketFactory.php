@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Contract;
 use App\Models\Ticket;
 use App\Models\Ticket\TicketCriticality;
 use App\Models\Ticket\TicketPriority;
@@ -55,8 +56,10 @@ class TicketFactory extends Factory
                 : null;
             $endedAt?->setTime($endedAt->format('H'), $endedAt->format('i'));
 
-            $contract = $client->company->currentContract(Carbon::instance($createdAt));
-        } while (is_null($contract) || $contract->durationRemaining() < $duration);
+            $contract = $client->company
+                ->currentContracts('attributable', Carbon::instance($createdAt))
+                ->first(fn(Contract $contract) => $contract->durationRemaining() >= $duration);
+        } while (is_null($contract));
 
         return [
             'technician_id' => fake()->boolean(75) ? $technician?->id : null,

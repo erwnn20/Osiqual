@@ -27,7 +27,9 @@ class ContractController extends Controller
                     ],
                     [
                         'icon' => 'building-2',
-                        'value' => Company::all()->filter(fn(Company $company) => $company->currentContract() === null)->count(),
+                        'value' => Company::all()
+                            ->filter(fn(Company $company) => $company->currentContracts('attributable')->count() == 0)
+                            ->count(),
                         'title' => 'Sociétés sans Contract',
                     ],
                 ],
@@ -40,7 +42,8 @@ class ContractController extends Controller
                 'title' => 'Tous les Contrats',
             ]);
         elseif ($user->role->permission_client) {
-            $remaining = $user->company->currentContract()?->durationRemaining() ?? 0;
+            $remaining = $user->company->currentContracts('attributable')
+                ->sum(fn(Contract $contract) => $contract->durationRemaining());
             $remainingHours = round($remaining / 60, 1);
 
             return view('object.index', [
@@ -52,9 +55,8 @@ class ContractController extends Controller
                     ],
                     [
                         'icon' => 'file-text',
-                        'value' => !$user->company->currentContract() ? 'Aucun' :
-                            ($user->company->currentContract()->type->monthly ? 'Mensuel' : 'Fixe'),
-                        'title' => 'Type du Contrat en Cours',
+                        'value' => $user->company->currentContracts('attributable')->count(),
+                        'title' => 'Nombre de Contrat en Cours',
                     ],
                     [
                         'icon' => 'file-text',

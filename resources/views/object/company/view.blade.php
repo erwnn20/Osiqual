@@ -83,15 +83,15 @@
             <div class="flex flex-col gap-3.5">
                 <h3 class="text-2xl/tight font-bold">Contrats Liés</h3>
 
-                @php $current = $company->currentContract() @endphp
-                <x-table :data="collect([$current])->filter()"
+                @php $currentContracts = $company->currentContracts('all') @endphp
+                <x-table :data="$currentContracts"
                          :filter="false" :edit="false" error="Aucun Contrat en cours">
                     <h3 class="text-lg/tight font-bold">Contrat en cours</h3>
                 </x-table>
 
-                <x-table :data="$company->contracts()->where('id', '!=', $current?->id)
+                <x-table :data="$company->contracts()->whereNotIn('id', $currentContracts->pluck('id'))
                                     ->paginate(perPage: 4, pageName: 'contracts_page')"
-                         :filter="false" :edit="false" error="Aucun {{ $current ? 'autre ' : '' }}Contrats lié">
+                         :filter="false" :edit="false" error="Aucun {{ $currentContracts->count() > 0 ? 'autre ' : '' }}Contrats lié">
                     <h3 class="text-lg/tight font-bold">Autres Contrats</h3>
                 </x-table>
             </div>

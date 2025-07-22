@@ -22,15 +22,11 @@ class ContractFactory extends Factory
      */
     public function definition(): array
     {
-        $company = Company::inRandomOrder()->first() ?? Company::factory()->create();
-        $type = ContractType::inRandomOrder()->first() ?? ContractType::factory()->create();
-        $startDate = fake()->dateTimeBetween('-2 years', '+2 years');
-
         return [
-            'company_id' => $company->id,
-            'start_date' => $startDate,
+            'company_id' => Company::inRandomOrder()->first() ?? Company::factory()->create()->id,
+            'type_id' => ($type = ContractType::inRandomOrder()->first() ?? ContractType::factory()->create())->id,
+            'start_date' => $startDate = fake()->dateTimeBetween('-2 years', '+2 years'),
             'end_date' => $type->monthly ? fake()->dateTimeBetween($startDate, (clone $startDate)->modify('+6 month')) : null,
-            'type_id' => $type->id,
         ];
     }
 }

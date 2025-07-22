@@ -69,7 +69,7 @@ class TestSeeder extends Seeder
 
         User::where('role_id', $client->id)->get()
             ->each(function ($user) {
-                Contract::factory(3)->create([
+                Contract::factory(5)->create([
                     'company_id' => $user->company->id,
                 ]);
             });

@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
+use InvalidArgumentException;
 
 class Company extends Model
 {
@@ -64,20 +66,26 @@ class Company extends Model
         return $this->hasMany(Contract::class);
     }
 
-    public function currentContract(?Carbon $datetime = null): ?Contract
+    public function currentContracts(string $list, ?Carbon $datetime = null): Collection
     {
-        return $this->contracts()
+        $contracts = $this->contracts()
             ->when($datetime, function ($query) use ($datetime) {
-                $query->where('start_date', '<=', $datetime)
-                    ->where(function ($q) use ($datetime) {
-                        $q->whereNull('end_date')
-                            ->orWhere('end_date', '>=', $datetime);
-                    });
+                $query
+                    ->where('start_date', '<=', $datetime)
+                    ->where(fn($q) => $q->whereNull('end_date')->orWhere('end_date', '>=', $datetime));
             })
             ->get()
-            ->filter(fn($contract) => $datetime || $contract->status->id === ContractStatus::inProgress()->id)
-            ->filter(fn($contract) => !$contract->isParent())
-            ->first();
+            ->filter(fn(Contract $contract) => $contract->durationRemaining() > 0)
+            ->filter(fn(Contract $contract) => $datetime || $contract->status->id === ContractStatus::inProgress()->id)
+            ->sortBy(fn(Contract $contract) => [
+                is_null($contract->end_date) ? 1 : 0, $contract->end_date, $contract->durationRemaining()
+            ]);
+
+        return match ($list) {
+            'all' => $contracts,
+            'attributable' => $contracts->filter(fn($contract) => !$contract->isParent()),
+            default => throw new InvalidArgumentException("Invalid list: $list"),
+        };
     }
 
     public function employees(): HasMany

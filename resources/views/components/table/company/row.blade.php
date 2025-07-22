@@ -9,8 +9,8 @@
         <div class="flex gap-1 items-center">
             {{ $data->name }}
 
-            @if(!$data->currentContract())
-                <x-tooltip title="sans Contrat">
+            @if(!$data->currentContracts('attributable')->count() > 0)
+                <x-tooltip title="Aucun Contrat pouvant accueillir de Ticket en Cours">
                     <i class="h-4 w-fit text-error" data-lucide="circle-alert"></i>
                 </x-tooltip>
             @endif

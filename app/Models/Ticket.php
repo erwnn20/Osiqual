@@ -31,7 +31,10 @@ class Ticket extends Model
                 $model->company_id = $model->client->company->id;
 
             if (empty($model->contract_id))
-                $model->contract_id = $model->company->currentContract($model->creation_date)->id;
+                $model->contract_id = $model->company
+                    ->currentContracts('attributable', $model->creation_date)
+                    ->first(fn(Contract $contract) => $contract->durationRemaining() >= $model->duration)
+                    ->id;
 
         });
 
