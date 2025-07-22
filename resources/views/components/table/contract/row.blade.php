@@ -37,11 +37,6 @@
 
     <!-- Actions -->
     <td class="flex items-center gap-1">
-        @if($edit)
-            <x-button :href="route('contract.edit', ['id' => $data->id])" size="sm" color="link">Modifier
-            </x-button>
-        @else
-            <x-button :href="route('contract.view', ['id' => $data->id])" size="sm" color="link">Voir</x-button>
-        @endif
+        <x-button :href="route('contract.view', ['id' => $data->id])" size="sm" color="link">Voir</x-button>
     </td>
 </tr>

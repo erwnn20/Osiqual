@@ -15,7 +15,7 @@
     --color-secondary: #F07E26;
 
     --color-valid: #00B112;
-    --color-warning: var(--color-amber-500);
+    --color-warning: var(--color-secondary);
     --color-error: #DA3636;
 
     --color-default-50: var(--color-slate-50);
@@ -48,6 +48,10 @@
 
     .dark {
         --color-primary: var(--color-secondary);
+
+        --color-valid: var(--color-valid);
+        --color-warning: var(--color-amber-500);
+        --color-error: var(--color-error);
 
         --color-default-50: var(--color-slate-950);
         --color-default-100: var(--color-slate-900);

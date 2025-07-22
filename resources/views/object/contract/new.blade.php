@@ -68,6 +68,13 @@
                                  class="w-full"
                         />
                     </div>
+
+                    <div class="flex items-center gap-2 ms-1">
+                        <i class="h-5 w-fit text-warning" data-lucide="triangle-alert"></i>
+                        <p class="text-sm tracking-wide italic text-warning">
+                            Les contrats ne pourront être modifier par la suite.
+                        </p>
+                    </div>
                 </x-form.part>
 
             </x-form>

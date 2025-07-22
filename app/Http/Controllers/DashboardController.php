@@ -46,7 +46,7 @@ class DashboardController extends Controller
                 'contracts' => [
                     'data' => Contract::orderBy('start_date', 'desc')->limit(5)->get(),
                     'count' => Contract::count(),
-                    'edit' => true
+                    'edit' => false
                 ],
             ]);
         elseif ($user->role->permission_technician)
@@ -107,11 +107,6 @@ class DashboardController extends Controller
                     'edit' => true
                 ],
                 'contract' => $user->company->currentContract(),
-                /*'contracts' => [
-                    'data' => $user->company->contracts()->orderBy('start_date', 'desc')->limit(5)->get(),
-                    'count' => $user->company->contracts()->count(),
-                    'edit' => false
-                ],*/
             ]);
         }
 

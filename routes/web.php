@@ -80,10 +80,9 @@ Route::prefix('/')->middleware(['auth', 'active'])->group(function () {
             Route::get('/new', 'new')->name('new')->middleware(['admin', 'contract.new']);
             Route::post('/new', 'create')->name('new')->middleware(['admin', 'contract.new']);
 
-            Route::get('/edit/{id}', 'edit')->name('edit')
-                ->middleware(['admin', 'contract.edit'])->whereUuid('id');
-            Route::patch('/edit/{id}', 'update')->name('edit')
-                ->middleware(['admin', 'contract.edit'])->whereUuid('id');
+            Route::get('/edit/{id}',
+                fn(string $id) => redirect()->route('contract.view', ['id' => $id]))
+                ->name('edit')->whereUuid('id');
 
             Route::get('/view/{id}', 'view')->name('view')
                 ->middleware('contract.view')->whereUuid('id');

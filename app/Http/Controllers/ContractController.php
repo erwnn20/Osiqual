@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ContractCreateRequest;
-use App\Http\Requests\ContractUpdateRequest;
 use App\Models\Company;
 use App\Models\Contract;
 use Illuminate\Contracts\View\View;
@@ -32,7 +31,7 @@ class ContractController extends Controller
                 ],
                 'data' => Contract::paginate(8),
                 'create' => $user->role->permission_admin,
-                'edit' => $user->role->permission_admin,
+                'edit' => false,
 
                 'icon' => 'file-text',
                 'header' => 'Contrats',
@@ -93,31 +92,8 @@ class ContractController extends Controller
             'end_date' => $credentials['end'] ?? null,
         ]);
 
-        return to_route('contract.edit', ['id' => $contract->id])
+        return to_route('contract.view', ['id' => $contract->id])
             ->with('success', 'Le contrat a été créé avec succès.');
-    }
-
-    public function edit(Request $request, string $id): View
-    {
-        return view('object.contract.edit', [
-            'contract' => Contract::findOrFail($id),
-
-            'companies' => self::companies(),
-            'types' => self::types(),
-        ]);
-    }
-
-    public function update(ContractUpdateRequest $request, string $id): RedirectResponse
-    {
-        $contract = Contract::findOrFail($id);
-        $credentials = $request->validated();
-
-        $contract->update([
-            'start_date' => $credentials['start'],
-            'end_date' => $credentials['end'] ?? null,
-        ]);
-
-        return back()->with('success', 'Le contrat a été mis à jour avec succès.');
     }
 
     public function view(Request $request, string $id): View
