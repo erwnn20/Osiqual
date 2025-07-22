@@ -94,7 +94,9 @@ class TicketController extends Controller
             ]);
 
         elseif ($user->role->permission_client)
-            return view('object.ticket.client.new', []);
+            return view('object.ticket.client.new', [
+                'contract' => $user->company->currentContract(),
+            ]);
 
         abort(Response::HTTP_FORBIDDEN);
     }

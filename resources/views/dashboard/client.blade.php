@@ -25,7 +25,8 @@
 
                 <x-contract.range :contract="$contract"
                                   title="Temps de Contrat restant"
-                                  error="Votre entreprise n'a aucun contrat en cours"/>
+                                  error="Votre entreprise n'a aucun contrat en cours"
+                />
             </div>
 
             <x-table :data="$tickets['data']" :filter="false" :edit="$tickets['edit']">
