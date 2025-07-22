@@ -14,9 +14,10 @@
     @if(!empty($data) && $data->count() > 0)
 
         @if($filter)
-            <div class="flex gap-2">
-                <x-input type="search" name="table-search" placeholder="Rechercher..." class="w-full"/>
-                <x-button size="md" icon="funnel" color="secondary">Filtrer</x-button>
+            <div class="flex gap-2" title="not implemented yet">
+                <x-input type="search" name="table-search" placeholder="Rechercher..." class="w-full"
+                         disabled/>
+                <x-button size="md" icon="funnel" color="secondary" disabled>Filtrer</x-button>
             </div>
         @endif
 
