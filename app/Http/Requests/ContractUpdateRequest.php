@@ -23,7 +23,6 @@ class ContractUpdateRequest extends ContractCreateRequest
     public function rules(): array
     {
         return [
-            'status' => ['required', 'exists:contract_statuses,id'],
             'start' => ['required', 'date', 'regex:/^\d{4}-\d{2}(-\d{2})?$/'],
             'end' => ['nullable', 'date', 'regex:/^\d{4}-\d{2}(-\d{2})?$/', 'after:start'],
         ];

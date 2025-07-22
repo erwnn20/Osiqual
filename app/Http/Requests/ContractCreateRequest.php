@@ -25,7 +25,6 @@ class ContractCreateRequest extends FormRequest
         return [
             'company' => ['required', 'exists:companies,id'],
             'type' => ['required', 'exists:contract_types,id'],
-            'status' => ['required', 'exists:contract_statuses,id'],
             'start' => ['required', 'date', 'regex:/^\d{4}-\d{2}(-\d{2})?$/'],
             'end' => ['nullable', 'date', 'regex:/^\d{4}-\d{2}(-\d{2})?$/', 'after:start'],
         ];
@@ -39,9 +38,6 @@ class ContractCreateRequest extends FormRequest
 
             'type.required' => 'Le type de contrat est obligatoire.',
             'type.exists' => 'Le type de contrat sélectionné est invalide.',
-
-            'status.required' => 'Le statut du contrat est obligatoire.',
-            'status.exists' => 'Le statut sélectionné est invalide.',
 
             'start.required' => 'La date de début est obligatoire.',
             'start.date' => 'La date de début doit être une date valide.',

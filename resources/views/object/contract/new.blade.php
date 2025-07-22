@@ -1,4 +1,4 @@
-﻿@php use Illuminate\Support\Facades\Auth; @endphp
+﻿@php use Illuminate\Support\Carbon;use Illuminate\Support\Facades\Auth; @endphp
 
 @props([
     'companies',
@@ -39,30 +39,30 @@
                         @once
                             @vite('resources/js/scripts/contract/typeSelect.js')
                         @endonce
-
-                        <x-input type="select"
-                                 name="status"
-                                 label="Status"
-                                 :value="old('status')"
-                                 :error="$errors->first('status')"
-                                 :options="$statuses"
-                                 required
-                                 class="w-full"
-                        />
                     </div>
                     <div class="flex gap-2.5">
+                        @php
+                            $value = old('start')
+                                ? Carbon::parse(old('start'))->format('Y-m-d')
+                                : null;
+                        @endphp
                         <x-input type="date"
                                  name="start"
                                  label="Date de Début"
-                                 :value="old('start')"
+                                 :value="$value"
                                  :error="$errors->first('start')"
                                  required
                                  class="w-full"
                         />
+                        @php
+                            $value = old('end')
+                                ? Carbon::parse(old('end'))->format('Y-m-d')
+                                : null;
+                        @endphp
                         <x-input type="date"
                                  name="end"
                                  label="Date de Fin"
-                                 :value="old('end')"
+                                 :value="$value"
                                  :error="$errors->first('end')"
                                  required
                                  class="w-full"

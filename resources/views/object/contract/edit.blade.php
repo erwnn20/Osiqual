@@ -1,4 +1,4 @@
-﻿@php use Illuminate\Support\Facades\Auth; @endphp
+﻿@php use Illuminate\Support\Carbon;use Illuminate\Support\Facades\Auth; @endphp
 
 @props([
     'contract',
@@ -49,30 +49,42 @@
                                 @vite('resources/js/scripts/contract/typeSelect.js')
                             @endonce
 
-                            <x-input type="select"
-                                     name="status"
-                                     label="Status"
-                                     placeholder="-"
-                                     :value="old('status', $contract->status_id)"
-                                     :error="$errors->first('status')"
-                                     :options="$statuses"
-                                     required
-                                     class="w-full"
-                            />
+                            <div class="flex flex-col gap-1">
+                                <p class="w-fit text-sm font-medium text-default-700">
+                                    Status
+                                </p>
+
+                                <span class="w-full rounded-lg py-2 px-4
+                                             <!--bg-default-200/70 text-default-800-->
+                                             uppercase whitespace-nowrap font-semibold"
+                                      style="background-color: {{ $contract->status->color }}26; color: {{ $contract->status->color }}">
+                                    {{ $contract->status->name }}
+                                </span>
+                            </div>
                         </div>
                         <div class="flex gap-2.5">
+                            @php
+                                $value = old('start')
+                                    ? Carbon::parse(old('start'))->format('Y-m-d')
+                                    : $contract->start_date->format('Y-m-d');
+                            @endphp
                             <x-input type="date"
                                      name="start"
                                      label="Date de Début"
-                                     :value="old('start', $contract->start_date->format('Y-m-d'))"
+                                     :value="$value"
                                      :error="$errors->first('start')"
                                      required
                                      class="w-full"
                             />
+                            @php
+                                $value = old('end')
+                                    ? Carbon::parse(old('end'))->format('Y-m-d')
+                                    : $contract->end_date?->format('Y-m-d');
+                            @endphp
                             <x-input type="date"
                                      name="end"
                                      label="Date de Fin"
-                                     :value="old('end', $contract->end_date?->format('Y-m-d'))"
+                                     :value="$value"
                                      :error="$errors->first('end')"
                                      required
                                      class="w-full"

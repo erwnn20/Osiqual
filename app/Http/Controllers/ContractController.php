@@ -79,7 +79,6 @@ class ContractController extends Controller
         return view('object.contract.new', [
             'companies' => self::companies(),
             'types' => self::types(),
-            'statuses' => self::statuses(),
         ]);
     }
 
@@ -89,10 +88,9 @@ class ContractController extends Controller
 
         $contract = Contract::create([
             'company_id' => Company::findOrFail($credentials['company'])->id,
+            'type_id' => Contract\ContractType::findOrFail($credentials['type'])->id,
             'start_date' => $credentials['start'],
             'end_date' => $credentials['end'] ?? null,
-            'status_id' => $credentials['status'],
-            'type_id' => Contract\ContractType::findOrFail($credentials['type'])->id,
         ]);
 
         return to_route('contract.edit', ['id' => $contract->id])
@@ -106,7 +104,6 @@ class ContractController extends Controller
 
             'companies' => self::companies(),
             'types' => self::types(),
-            'statuses' => self::statuses(),
         ]);
     }
 
@@ -118,7 +115,6 @@ class ContractController extends Controller
         $contract->update([
             'start_date' => $credentials['start'],
             'end_date' => $credentials['end'] ?? null,
-            'status_id' => $credentials['status'],
         ]);
 
         return back()->with('success', 'Le contrat a été mis à jour avec succès.');
@@ -131,7 +127,6 @@ class ContractController extends Controller
 
             'companies' => self::companies(),
             'types' => self::types(),
-            'statuses' => self::statuses(),
         ]);
     }
 
@@ -148,13 +143,6 @@ class ContractController extends Controller
     {
         return Contract\ContractType::all()->map(fn($type) => [
             'value' => $type->id, 'label' => $type->name, 'data' => ['monthly' => $type->monthly]
-        ])->toArray();
-    }
-
-    private static function statuses(): array
-    {
-        return Contract\ContractStatus::all()->map(fn($status) => [
-            'value' => $status->id, 'label' => $status->name
         ])->toArray();
     }
 }
