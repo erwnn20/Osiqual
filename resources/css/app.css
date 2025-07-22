@@ -49,9 +49,7 @@
     .dark {
         --color-primary: var(--color-secondary);
 
-        --color-valid: var(--color-valid);
         --color-warning: var(--color-amber-500);
-        --color-error: var(--color-error);
 
         --color-default-50: var(--color-slate-950);
         --color-default-100: var(--color-slate-900);

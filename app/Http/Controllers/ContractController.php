@@ -20,7 +20,9 @@ class ContractController extends Controller
                 'cards' => [
                     [
                         'icon' => 'file-text',
-                        'value' => Contract::where('status_id', Contract\ContractStatus::inProgress()->id)->count(),
+                        'value' => Contract::all()
+                            ->filter(fn($contract) => $contract->status->id === Contract\ContractStatus::inProgress()->id)
+                            ->count(),
                         'title' => 'Contrats en Cours',
                     ],
                     [

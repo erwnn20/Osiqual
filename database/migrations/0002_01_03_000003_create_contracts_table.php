@@ -25,9 +25,6 @@ return new class extends Migration {
                 ->nullOnDelete();
             $table->date('start_date');
             $table->date('end_date')->nullable()->default(null);
-            /*$table->foreignIdFor(Contract\ContractStatus::class, 'status_id')
-                ->constrained()
-                ->restrictOnDelete();*/
             $table->foreignIdFor(Contract\ContractType::class, 'type_id')
                 ->constrained()
                 ->restrictOnUpdate()
