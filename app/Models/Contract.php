@@ -148,8 +148,11 @@ class Contract extends Model
             return $this->children();
 
         return Contract::where(function ($query) {
-            $query->where('id', $this->parent_contract_id)
-                ->orWhere('parent_contract_id', $this->parent_contract_id);
+            $query
+                ->where('parent_contract_id', '!=', null)
+                ->where('parent_contract_id', $this->parent_contract_id)
+                ->orWhere('id', $this->parent_contract_id)
+            ;
         })->where('id', '!=', $this->id);
     }
 
