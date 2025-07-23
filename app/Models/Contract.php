@@ -79,6 +79,7 @@ class Contract extends Model
         'start_date',
         'end_date',
         'type_id',
+        'parent_contract_id',
     ];
 
     protected $casts = [
@@ -86,6 +87,7 @@ class Contract extends Model
         'start_date' => 'datetime',
         'end_date' => 'datetime',
         'type_id' => 'string',
+        'parent_contract_id' => 'string',
     ];
 
     public function company(): BelongsTo

@@ -48,7 +48,7 @@ class DashboardController extends Controller
                     'edit' => true
                 ],
                 'contracts' => [
-                    'data' => Contract::orderBy('start_date', 'desc')->limit(5)->get(),
+                    'data' => Contract::orderBy('created_at', 'desc')->limit(5)->get(),
                     'count' => Contract::count(),
                     'edit' => false
                 ],
@@ -80,7 +80,7 @@ class DashboardController extends Controller
                     'edit' => true
                 ],
                 'contracts' => [
-                    'data' => Contract::orderBy('start_date', 'desc')->limit(5)->get(),
+                    'data' => Contract::orderBy('created_at', 'desc')->limit(5)->get(),
                     'count' => Contract::count(),
                     'edit' => false
                 ],

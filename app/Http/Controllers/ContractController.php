@@ -33,7 +33,7 @@ class ContractController extends Controller
                         'title' => 'Sociétés sans Contract',
                     ],
                 ],
-                'data' => Contract::paginate(8),
+                'data' => Contract::orderBy('created_at', 'desc')->paginate(8),
                 'create' => $user->role->permission_admin,
                 'edit' => false,
 
@@ -64,7 +64,7 @@ class ContractController extends Controller
                         'title' => 'Nombre de Contrat Signés',
                     ],
                 ],
-                'data' => $user->company->contracts()->paginate(8),
+                'data' => $user->company->contracts()->orderBy('created_at', 'desc')->paginate(8),
                 'create' => false,
                 'edit' => false,
 
