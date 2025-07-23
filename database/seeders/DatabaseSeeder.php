@@ -35,12 +35,48 @@ class DatabaseSeeder extends Seeder
             'permission_client' => true,
         ]);
 
-        TicketCriticality::factory(4)->create();
-        TicketPriority::factory(5)->create();
-        TicketStatus::factory(6)->create();
+        TicketCriticality::factory()->createMany([
+            ['name' => 'Faible', 'value' => 1, 'color' => '#06B6D4'],
+            ['name' => 'Moyenne', 'value' => 2, 'color' => '#00B112'],
+            ['name' => 'Haute', 'value' => 3, 'color' => '#F07E26'],
+            ['name' => 'Critique', 'value' => 4, 'color' => '#DA3636'],
+        ]);
+        TicketPriority::factory()->createMany([
+            ['name' => 'Très basse', 'value' => 1, 'color' => '#0EA5E9'],
+            ['name' => 'Basse', 'value' => 2, 'color' => '#06B6D4'],
+            ['name' => 'Normale', 'value' => 3, 'color' => '#00B112'],
+            ['name' => 'Haute', 'value' => 4, 'color' => '#F07E26'],
+            ['name' => 'Urgente', 'value' => 5, 'color' => '#DA3636'],
+        ]);
+        TicketStatus::factory()->createMany([
+            ['name' => 'Nouveau', 'value' => 1, 'color' => '#0EA5E9'],
+            ['name' => 'Ouvert', 'value' => 2, 'color' => '#06B6D4'],
+            ['name' => 'En cours', 'value' => 3, 'color' => '#00B112'],
+            ['name' => 'En attente', 'value' => 4, 'color' => '#FFB733'],
+            ['name' => 'Résolu', 'value' => 5, 'color' => '#F07E26'],
+            ['name' => 'Fermé', 'value' => 6, 'color' => '#DA3636'],
+        ]);
 
-        ContractStatus::factory(4)->create();
-        ContractType::factory(5)->create();
+        ContractStatus::factory()->createMany([
+            ['name' => 'Défaut', 'value' => 0, 'color' => '#3d3d3d', 'conditions' => []],
+            ['name' => 'Ouvert', 'value' => 1, 'color' => '#00B112',
+                'conditions' => [
+                    'start' => ['condition' => '>', 'logic' => '&&', 'column' => 'start_date', 'type' => 'date'],
+                ]
+            ],
+            ['name' => 'En cours', 'value' => 2, 'color' => '#F07E26',
+                'conditions' => [
+                    'start' => ['condition' => '<=', 'logic' => '&&', 'column' => 'start_date', 'type' => 'date'],
+                    'end' => ['condition' => '>=', 'logic' => '&&', 'column' => 'end_date', 'type' => 'date'],
+                ]
+            ],
+            ['name' => 'Terminé', 'value' => 3, 'color' => '#DA3636',
+                'conditions' => [
+                    'end' => ['condition' => '<', 'logic' => '&&', 'column' => 'end_date', 'type' => 'date'],
+                    'consumption' => ['condition' => '>=', 'logic' => '||', 'value' => '100', 'column' => 'consumption', 'type' => 'percent'],
+                ]
+            ],
+        ]);
 
         $company = Company::factory()->create([
             'name' => 'Osiqual',
