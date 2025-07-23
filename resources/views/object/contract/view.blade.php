@@ -95,7 +95,9 @@
 
             </x-form>
 
-            <x-contract.range :contract="$contract"/>
+            <x-contract.range :contract="$contract">
+                <h3 class="text-2xl font-semibold">Consommation du Contrat</h3>
+            </x-contract.range>
 
             <x-table :data="$contract->tickets()->paginate(5)"
                      :filter="false" :edit="true" error="Aucun Ticket lié">

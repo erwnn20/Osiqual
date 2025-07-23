@@ -21,8 +21,63 @@
     <x-table.element>{{ $data->type->name }}</x-table.element>
 
     <!-- Duration -->
+    @if($data->type->monthly)
+        @php
+            $today = now();
+            $compare = $data->end_date->min($today);
+
+            $diffUsed = $data->start_date->diff($compare);
+            $diffRemaining = $data->end_date->diff($compare);
+
+            $maxDays = $data->start_date->diffInDays($data->end_date);
+            $usedDays = $data->start_date->diffInDays($compare);
+            $remainingDays = $data->end_date->diffInDays($compare);
+
+            $used = [
+                'value' => $usedDays,
+                'detail' => (int) ceil(abs($usedDays)) . ' jours',
+                'condition' => $condition = $data->start_date < $today,
+                'compact' => !$condition ? $data->start_date->translatedFormat('F Y')
+                                         : ((int) ceil($data->start_date->diffInMonths($compare, true)) . ' mois'),
+                'message' => 'Commence dans ' . (int) ceil($data->start_date->diffInMonths($compare, true)) . ' mois'
+            ];
+            $remaining = [
+                'value' => $diffRemaining,
+                'diff' => $remainingDays,
+                'detail' => (int) ceil(abs($remainingDays)) . ' jours',
+                'compact' => (int) ceil($data->end_date->diffInMonths($compare, true)) . ' mois',
+                'condition' => ($diffRemaining->y * 12 + $diffRemaining->m) > 1,
+            ];
+            $max = [
+                'value' => $maxDays,
+                'detail' => $data->end_date->format('d/m/Y'),
+                'compact' => $data->end_date->translatedFormat('F Y'),
+            ];
+        @endphp
+    @else
+        @php
+            $used = [
+                'value' => $value = $data->durationUsed(),
+                'detail' => "$value min",
+                'condition' => true,
+                'compact' => round($value / 60, 1) . ' h',
+            ];
+            $remaining = [
+                'value' => $value = $data->durationRemaining(),
+                'detail' => "$value min",
+                'compact' => round($value / 60, 1) . ' h',
+                'condition' => $value > 60,
+            ];
+            $max = [
+                'value' => $value = $data->type->duration,
+                'detail' => "$value min",
+                'compact' => round($value / 60, 1) . ' h',
+            ];
+        @endphp
+    @endif
     <x-table.element.duration
-        :duration="['used' => $data->durationUsed(), 'remaining' => $data->durationRemaining(), 'max' => $data->type->duration]"/>
+            :duration="['used' => $used, 'remaining' => $remaining, 'max' => $max]"
+    />
 
     <!-- Status -->
     <x-table.element.label :color="$data->status->color">
