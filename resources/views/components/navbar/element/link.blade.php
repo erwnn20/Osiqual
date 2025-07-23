@@ -11,7 +11,7 @@
             'icon' => 'h-5'
         ],
         'sm' => [
-            'text' => 'text-sm',
+            'text' => 'text-sm text-default-700',
             'icon' => 'h-4'
         ],
     ]
@@ -23,7 +23,8 @@
         'transition-all', 'duration-200',
         'hover:text-primary', 'hover:bg-primary/10',
         'focus:text-primary', 'focus:bg-primary/10', 'focus:outline-none',
-        'bg-primary/20' => $active, 'sticky top-5 backdrop-blur-md' => $active,
+        'text-primary' => $active, 'bg-primary/15' => $active,
+        'sticky top-5 backdrop-blur-md' => $active,
     ]) }}>
     @if($icon)
         <i class="{{ $sizes[$size]['icon'] }} stroke-2" data-lucide="{{ $icon }}"></i>
