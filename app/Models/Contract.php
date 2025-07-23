@@ -54,7 +54,6 @@ class Contract extends Model
                         'company_id' => $model->company->id,
                         'start_date' => $month->copy()->startOfMonth(),
                         'end_date' => $month->copy()->endOfMonth(),
-                        'status_id' => $model->status->id,
                         'type_id' => Contract\ContractType::firstOrCreate(
                             ['duration' => $model->type->duration, 'monthly' => false]
                         )->id,
@@ -77,20 +76,18 @@ class Contract extends Model
 
     protected $fillable = [
         'company_id',
-        'parent_contract_id',
         'start_date',
         'end_date',
-        'status_id',
         'type_id',
+        'parent_contract_id',
     ];
 
     protected $casts = [
         'company_id' => 'string',
-        'parent_contract_id' => 'string',
         'start_date' => 'datetime',
         'end_date' => 'datetime',
-        'status_id' => 'string',
         'type_id' => 'string',
+        'parent_contract_id' => 'string',
     ];
 
     public function company(): BelongsTo
@@ -98,9 +95,17 @@ class Contract extends Model
         return $this->belongsTo(Company::class);
     }
 
-    public function status(): BelongsTo
+    public function status(): ContractStatus
     {
-        return $this->belongsTo(ContractStatus::class, 'status_id');
+        $statuses = ContractStatus::orderByDesc('value')->get();
+
+        return $statuses->first(fn($status) => $status->check($this))
+            ?? $statuses->last();
+    }
+
+    public function getStatusAttribute(): ContractStatus
+    {
+        return $this->status();
     }
 
     public function type(): BelongsTo
@@ -145,8 +150,17 @@ class Contract extends Model
             return $this->children();
 
         return Contract::where(function ($query) {
-            $query->where('id', $this->parent_contract_id)
-                ->orWhere('parent_contract_id', $this->parent_contract_id);
+            $query
+                ->where('parent_contract_id', '!=', null)
+                ->where('parent_contract_id', $this->parent_contract_id)
+                ->orWhere('id', $this->parent_contract_id)
+            ;
         })->where('id', '!=', $this->id);
     }
+
+    public function getConsumptionAttribute(): float
+    {
+        return $this->durationUsed() / $this->type->duration;
+    }
+
 }

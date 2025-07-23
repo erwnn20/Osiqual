@@ -8,6 +8,7 @@ use App\Models\Contract;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class StatusController extends Controller
 {
@@ -18,14 +19,9 @@ class StatusController extends Controller
         return view('object.status.index', [
             'cards' => [
                 /*[
-                    'icon' => 'file-text',
-                    'value' => Contract::where('status_id', Contract\ContractStatus::inProgress()->id)->count(),
-                    'title' => 'Contrats en Cours',
-                ],
-                [
-                    'icon' => 'building-2',
-                    'value' => Company::all()->filter(fn(Company $company) => $company->currentContract() === null)->count(),
-                    'title' => 'Sociétés sans Contract',
+                    'icon' => , // icon with lucide
+                    'value' => ,
+                    'title' => ,
                 ],*/
             ],
             'data' => Contract\ContractStatus::orderBy('value')->paginate(8),
@@ -42,7 +38,12 @@ class StatusController extends Controller
     {
         $credentials = $request->validated();
 
-        $status = Contract\ContractStatus::create($credentials);
+        $status = Contract\ContractStatus::create([
+            'name' => $credentials['name'],
+            'value' => $credentials['value'],
+            'color' => $credentials['color'],
+            'conditions' => Contract\ContractStatus::createConditions($credentials),
+        ]);
 
         return back()->with('success', "Le status de contrat '$status->name' a été créé avec succès.");
     }
@@ -50,11 +51,22 @@ class StatusController extends Controller
     public function edit(Request $request, string $id): View
     {
         $user = $request->user();
+        $status = Contract\ContractStatus::findOrFail($id);
+        $contracts = Contract::all()->filter(fn($contract) => $contract->status->id === $status->id)->values();
+
+        $page = request('page', 1);
+        $perPage = 10;
 
         return view('object.status.edit', [
-            'status' => $status = Contract\ContractStatus::findOrFail($id),
+            'status' => $status,
             'linked' => [
-                'data' => Contract::where('status_id', $status->id)->paginate(5),
+                'data' => new LengthAwarePaginator(
+                    $contracts->forPage($page, $perPage),
+                    $contracts->count(),
+                    $perPage,
+                    $page,
+                    ['path' => request()->url(), 'query' => request()->query()]
+                ),
                 'title' => 'Contrats liés',
                 'error' => 'Aucun Contrat lié',
                 'edit' => $user->role->permission_admin,
@@ -70,7 +82,12 @@ class StatusController extends Controller
         $status = Contract\ContractStatus::findOrFail($id);
         $credentials = $request->validated();
 
-        $status->update($credentials);
+        $status->update([
+            'name' => $credentials['name'],
+            'value' => $credentials['value'],
+            'color' => $credentials['color'],
+            'conditions' => Contract\ContractStatus::createConditions($credentials),
+        ]);
 
         return back()->with('success', "Le status de contrat '$status->name' a été mis à jour avec succès.");
     }
@@ -86,10 +103,22 @@ class StatusController extends Controller
 
     public function view(Request $request, string $id): View
     {
+        $status = Contract\ContractStatus::findOrFail($id);
+        $contracts = Contract::all()->filter(fn($contract) => $contract->status->id === $status->id)->values();
+
+        $page = request('page', 1);
+        $perPage = 10;
+
         return view('object.status.view', [
-            'status' => $status = Contract\ContractStatus::findOrFail($id),
+            'status' => $status,
             'linked' => [
-                'data' => Contract::where('status_id', $status->id)->paginate(5),
+                'data' => new LengthAwarePaginator(
+                    $contracts->forPage($page, $perPage),
+                    $contracts->count(),
+                    $perPage,
+                    $page,
+                    ['path' => request()->url(), 'query' => request()->query()]
+                ),
                 'title' => 'Contrats liés',
                 'error' => 'Aucun Contrat lié',
                 'edit' => false,

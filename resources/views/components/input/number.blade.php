@@ -33,7 +33,7 @@
     <input type="number"
            name="{{ $name }}"
            id="{{ $name }}"
-           @if($value) value="{{ $value }}" @endif
+           @if(is_numeric($value)) value="{{ $value }}" @endif
            @if($placeholder) placeholder="{{ $placeholder }}" @endif
            @if($title) title="{{ $title }}" @endif
 

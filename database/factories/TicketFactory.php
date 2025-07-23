@@ -10,6 +10,7 @@ use App\Models\Ticket\TicketStatus;
 use App\Models\User;
 use App\Models\User\Role;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 
 /**
@@ -41,29 +42,28 @@ class TicketFactory extends Factory
                     ])->id
             ]);
 
-        $contract = $client->company->contracts()->inRandomOrder()->first() ??
-            Contract::factory()->create(['company_id' => $client->company->id]);
-
         $status = TicketStatus::inRandomOrder()->first() ?? TicketStatus::factory()->create();
         $priority = TicketPriority::inRandomOrder()->first() ?? TicketPriority::factory()->create();
         $criticality = TicketCriticality::inRandomOrder()->first() ?? TicketCriticality::factory()->create();
 
-        $createdAt = fake()->dateTimeBetween('-30 days')
-            ->setTime(fake()->numberBetween(0, 23), fake()->numberBetween(0, 59));
-        $endedAt = fake()->boolean(40)
-            ? fake()->dateTimeBetween((clone $createdAt)->modify('+1 minute'), (clone $createdAt)->modify('+5 days'))
-                ->setTime(fake()->numberBetween(0, 23), fake()->numberBetween(0, 59))
-            : null;
+        do {
+            $duration = fake()->numberBetween(0, 120);
 
-        $duration = $endedAt ? fake()->numberBetween(5, 120) : 0;
-        if ($contract->type->duration - $contract->durationUsed() < $duration)
-            $contract = Contract::factory()->create(['company_id' => $client->company->id]);
+            $createdAt = fake()->dateTimeBetween('-2 year', '+6 month')
+                ->setTime(fake()->numberBetween(0, 23), fake()->numberBetween(0, 59));
+            $endedAt = fake()->boolean(40)
+                ? fake()->dateTimeBetween((clone $createdAt)->modify("+$duration minute"), (clone $createdAt)->modify('+5 days'))
+                : null;
+            $endedAt?->setTime($endedAt->format('H'), $endedAt->format('i'));
+
+            $contract = $client->company
+                ->currentContracts('attributable', Carbon::instance($createdAt))
+                ->first(fn(Contract $contract) => $contract->durationRemaining() >= $duration);
+        } while (is_null($contract));
 
         return [
             'technician_id' => fake()->boolean(75) ? $technician?->id : null,
             'client_id' => $client->id,
-            'company_id' => $client->company->id,
-            'contract_id' => $contract->id,
             'title' => fake()->sentence(4),
             'description' => fake()->paragraph(),
             'duration' => $duration,

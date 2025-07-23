@@ -29,12 +29,16 @@ class DashboardController extends Controller
                     ],
                     [
                         'icon' => 'file-text',
-                        'value' => Contract::where('status_id', Contract\ContractStatus::inProgress()->id)->count(),
+                        'value' => Contract::all()
+                            ->filter(fn($contract) => $contract->status->id === Contract\ContractStatus::inProgress()->id)
+                            ->count(),
                         'title' => 'Contrats en Cours',
                     ],
                     [
                         'icon' => 'building-2',
-                        'value' =>  Company::all()->filter(fn(Company $company) => $company->currentContract() === null)->count(),
+                        'value' =>  Company::all()
+                            ->filter(fn(Company $company) => $company->currentContracts('attributable')->count() == 0)
+                            ->count(),
                         'title' => 'Sociétés sans Contract',
                     ],
                 ],
@@ -44,9 +48,9 @@ class DashboardController extends Controller
                     'edit' => true
                 ],
                 'contracts' => [
-                    'data' => Contract::orderBy('start_date', 'desc')->limit(5)->get(),
+                    'data' => Contract::orderBy('created_at', 'desc')->limit(5)->get(),
                     'count' => Contract::count(),
-                    'edit' => true
+                    'edit' => false
                 ],
             ]);
         elseif ($user->role->permission_technician)
@@ -64,7 +68,9 @@ class DashboardController extends Controller
                     ],
                     [
                         'icon' => 'file-text',
-                        'value' => Contract::where('status_id', Contract\ContractStatus::inProgress()->id)->count(),
+                        'value' => Contract::all()
+                            ->filter(fn($contract) => $contract->status->id === Contract\ContractStatus::inProgress()->id)
+                            ->count(),
                         'title' => 'Contrats en Cours',
                     ],
                 ],
@@ -74,13 +80,14 @@ class DashboardController extends Controller
                     'edit' => true
                 ],
                 'contracts' => [
-                    'data' => Contract::orderBy('start_date', 'desc')->limit(5)->get(),
+                    'data' => Contract::orderBy('created_at', 'desc')->limit(5)->get(),
                     'count' => Contract::count(),
                     'edit' => false
                 ],
             ]);
         elseif ($user->role->permission_client) {
-            $remaining = $user->company->currentContract()?->durationRemaining() ?? 0;
+            $remaining = $user->company->currentContracts('attributable')
+                ->sum(fn(Contract $contract) => $contract->durationRemaining());
             $remainingHours = round($remaining / 60, 1);
 
             return view('dashboard.client', [
@@ -106,12 +113,7 @@ class DashboardController extends Controller
                     'count' => $user->company->tickets()->count(),
                     'edit' => false
                 ],
-                'contract' => $user->company->currentContract(),
-                /*'contracts' => [
-                    'data' => $user->company->contracts()->orderBy('start_date', 'desc')->limit(5)->get(),
-                    'count' => $user->company->contracts()->count(),
-                    'edit' => false
-                ],*/
+                'contract' => $user->company->currentContracts('attributable')->first(),
             ]);
         }
 

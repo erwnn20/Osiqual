@@ -42,7 +42,7 @@ class TestSeeder extends Seeder
         TicketPriority::factory(5)->create();
         TicketStatus::factory(6)->create();
 
-        ContractStatus::factory(3)->create();
+        ContractStatus::factory(4)->create();
         ContractType::factory(5)->create();
 
         Company::factory(5)->create();
@@ -64,11 +64,25 @@ class TestSeeder extends Seeder
             'role_id' => $client->id,
             'active' => 0
         ]); // block
-        User::factory(5)->create();
+        User::factory(6)->create();
+        dump('users ok');
 
-        Contract::factory(10)->create();
-        Ticket::factory(25)->create();
-        TicketStep::factory(40)->create();
+        User::where('role_id', $client->id)->get()
+            ->each(function ($user) {
+                Contract::factory(5)->create([
+                    'company_id' => $user->company->id,
+                ]);
+            });
+        dump('contracts ok');
+
+        $ticketNumber = 50;
+        foreach (range(1, $ticketNumber) as $_) {
+            Ticket::factory()->create();
+        }
+        dump('tickets ok');
+
+        TicketStep::factory($ticketNumber * 3)->create();
+        dump('steps ok');
 
         dump('ok');
     }

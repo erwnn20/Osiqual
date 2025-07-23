@@ -13,12 +13,23 @@
 
     @switch(get_class($data))
 
-        @case(Contract\ContractStatus::class)
         @case(Ticket\TicketCriticality::class)
         @case(Ticket\TicketPriority::class)
         @case(Ticket\TicketStatus::class)
             <th scope="col">
                 Valeur
+            </th>
+            <th scope="col">
+                Couleur
+            </th>
+            @break
+
+        @case(Contract\ContractStatus::class)
+            <th scope="col">
+                Valeur
+            </th>
+            <th scope="col">
+                Conditions
             </th>
             <th scope="col">
                 Couleur

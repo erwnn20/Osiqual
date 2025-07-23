@@ -36,7 +36,6 @@ return Application::configure(basePath: dirname(__DIR__))
 
             'contract.index' => Contract\Index::class,
             'contract.new' => Contract\Create::class,
-            'contract.edit' => Contract\Edit::class,
             'contract.view' => Contract\View::class,
 
             'company.index' => Company\Index::class,

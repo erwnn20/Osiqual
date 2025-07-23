@@ -78,7 +78,7 @@
 
                   transition-all duration-200 cursor-pointer
 
-                  @if($disabled) disabled:opacity-50 @endif disabled:pointer-events-none
+                  @if(!$readonly) disabled:opacity-50 @endif disabled:pointer-events-none
                   hover:bg-default-200
                   focus:outline-none"
 

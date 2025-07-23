@@ -24,7 +24,7 @@
     'min' => null, /* number, range, datetime */
     'max' => null, /* number, range, datetime */
     'step' => null, /* number, range, datetime */
-    'checked' => false, /* checkbox, radio */
+    'checked' => null, /* checkbox, radio */
     'icon' => null, /* button */
     'color' => null, /* button */
     'accept' => null, /* file */

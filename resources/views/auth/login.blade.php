@@ -37,7 +37,7 @@
                         :error="$errors->first('password')"
                     />
 
-                    <x-button type="submit" class="w-full" size="md">Connection</x-button>
+                    <x-button type="submit" class="w-full" size="md">Connexion</x-button>
 
                 </form>
 

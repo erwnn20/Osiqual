@@ -1,4 +1,4 @@
-@php use App\Models\User;use Illuminate\Support\Facades\Route;use Illuminate\Support\Str;use App\Models\Ticket;use App\Models\Contract; @endphp
+@php use App\Models\User;use Carbon\Carbon;use Illuminate\Support\Facades\Route;use Illuminate\Support\Str;use App\Models\Ticket;use App\Models\Contract; @endphp
 @props([
     'data',
     'edit' => false,
@@ -10,34 +10,27 @@
 
     <!-- Number of appearances -->
     @php
-        $appearances = [
-            Ticket\TicketStatus::class => [
-                'class' => Ticket::class,
-                'table_id' => 'status_id'
-            ],
-            Ticket\TicketPriority::class => [
-                'class' => Ticket::class,
-                'table_id' => 'priority_id'
-            ],
-            Ticket\TicketCriticality::class => [
-                'class' => Ticket::class,
-                'table_id' => 'criticality_id'
-            ],
-            Contract\ContractStatus::class => [
-                'class' => Contract::class,
-                'table_id' => 'status_id'
-            ],
-            Contract\ContractType::class => [
-                'class' => Contract::class,
-                'table_id' => 'type_id'
-            ],
-            User\Role::class => [
-                'class' => User::class,
-                'table_id' => 'role_id'
-            ],
-        ];
+        $number = match (get_class($data)) {
+            Ticket\TicketStatus::class =>
+                Ticket::where('status_id', $data->id)->count(),
 
-        $number = $appearances[get_class($data)]['class']::where($appearances[get_class($data)]['table_id'], $data->id)->count();
+            Ticket\TicketPriority::class =>
+                Ticket::where('priority_id', $data->id)->count(),
+
+            Ticket\TicketCriticality::class =>
+                Ticket::where('criticality_id', $data->id)->count(),
+
+            Contract\ContractStatus::class =>
+                Contract::all()->filter(fn($contract) => $contract->status->id === $data->id)->count(),
+
+            Contract\ContractType::class =>
+                Contract::where('type_id', $data->id)->count(),
+
+            User\Role::class =>
+                User::where('role_id', $data->id)->count(),
+
+            default => 0,
+        };
     @endphp
     <x-table.element.label color="#808080" class="flex items-center justify-end">
         {{ $number }}
@@ -45,13 +38,58 @@
 
     @switch(get_class($data))
 
-        @case(Contract\ContractStatus::class)
         @case(Ticket\TicketCriticality::class)
         @case(Ticket\TicketPriority::class)
         @case(Ticket\TicketStatus::class)
             <!-- Value -->
             <x-table.element>
                 <div class="flex items-center justify-center">{{ $data->value }}</div>
+            </x-table.element>
+
+            <!-- Color -->
+            <x-table.element.label :color="$data->color">
+                {{ $data->color }}
+            </x-table.element.label>
+            @break
+
+        @case(Contract\ContractStatus::class)
+            <!-- Value -->
+            <x-table.element>
+                <div class="flex items-center justify-center">{{ $data->value }}</div>
+            </x-table.element>
+
+            <!-- Conditions -->
+            <x-table.element>
+                @empty($data->conditions)
+                    <p class="italic">Aucune Condition</p>
+                @else
+                    @foreach($data->conditions as $column => $infos)
+                        <p class="text-xs">
+                            {{ Str::of($column)->replace('_', ' ')->title() }} :
+                            <span class="font-semibold">
+                                @isset($infos['condition'])
+                                    {{ $infos['condition'] }}
+                                @endisset
+
+                                @isset($infos['value'])
+                                    @if(Carbon::hasFormat($infos['value'], 'Y-m-d\TH:i'))
+                                        {{ Carbon::parse($infos['value'])->format('Y-m-d H:i') }}
+                                    @else
+                                        {{ $infos['value'] }}%
+                                    @endif
+                                @else
+                                    Moment de comparaison
+                                @endisset
+
+                                @switch($infos['logic'] ?? null)
+                                    @case('&&') - « ET » @break
+                                    @case('||') - « OU » @break
+                                @endswitch
+                            </span>
+                        </p>
+
+                    @endforeach
+                @endempty
             </x-table.element>
 
             <!-- Color -->

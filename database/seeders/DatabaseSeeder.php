@@ -39,7 +39,7 @@ class DatabaseSeeder extends Seeder
         TicketPriority::factory(5)->create();
         TicketStatus::factory(6)->create();
 
-        ContractStatus::factory(3)->create();
+        ContractStatus::factory(4)->create();
         ContractType::factory(5)->create();
 
         $company = Company::factory()->create([

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ContractCreateRequest;
-use App\Http\Requests\ContractUpdateRequest;
 use App\Models\Company;
 use App\Models\Contract;
 use Illuminate\Contracts\View\View;
@@ -21,25 +20,30 @@ class ContractController extends Controller
                 'cards' => [
                     [
                         'icon' => 'file-text',
-                        'value' => Contract::where('status_id', Contract\ContractStatus::inProgress()->id)->count(),
+                        'value' => Contract::all()
+                            ->filter(fn($contract) => $contract->status->id === Contract\ContractStatus::inProgress()->id)
+                            ->count(),
                         'title' => 'Contrats en Cours',
                     ],
                     [
                         'icon' => 'building-2',
-                        'value' => Company::all()->filter(fn(Company $company) => $company->currentContract() === null)->count(),
+                        'value' => Company::all()
+                            ->filter(fn(Company $company) => $company->currentContracts('attributable')->count() == 0)
+                            ->count(),
                         'title' => 'Sociétés sans Contract',
                     ],
                 ],
-                'data' => Contract::paginate(8),
+                'data' => Contract::orderBy('created_at', 'desc')->paginate(8),
                 'create' => $user->role->permission_admin,
-                'edit' => $user->role->permission_admin,
+                'edit' => false,
 
                 'icon' => 'file-text',
                 'header' => 'Contrats',
                 'title' => 'Tous les Contrats',
             ]);
         elseif ($user->role->permission_client) {
-            $remaining = $user->company->currentContract()?->durationRemaining() ?? 0;
+            $remaining = $user->company->currentContracts('attributable')
+                ->sum(fn(Contract $contract) => $contract->durationRemaining());
             $remainingHours = round($remaining / 60, 1);
 
             return view('object.index', [
@@ -51,9 +55,8 @@ class ContractController extends Controller
                     ],
                     [
                         'icon' => 'file-text',
-                        'value' => !$user->company->currentContract() ? 'Aucun' :
-                            ($user->company->currentContract()->type->monthly ? 'Mensuel' : 'Fixe'),
-                        'title' => 'Type du Contrat en Cours',
+                        'value' => $user->company->currentContracts('attributable')->count(),
+                        'title' => 'Nombre de Contrat en Cours',
                     ],
                     [
                         'icon' => 'file-text',
@@ -61,7 +64,7 @@ class ContractController extends Controller
                         'title' => 'Nombre de Contrat Signés',
                     ],
                 ],
-                'data' => $user->company->contracts()->paginate(8),
+                'data' => $user->company->contracts()->orderBy('created_at', 'desc')->paginate(8),
                 'create' => false,
                 'edit' => false,
 
@@ -79,7 +82,6 @@ class ContractController extends Controller
         return view('object.contract.new', [
             'companies' => self::companies(),
             'types' => self::types(),
-            'statuses' => self::statuses(),
         ]);
     }
 
@@ -89,39 +91,13 @@ class ContractController extends Controller
 
         $contract = Contract::create([
             'company_id' => Company::findOrFail($credentials['company'])->id,
-            'start_date' => $credentials['start'],
-            'end_date' => $credentials['end'] ?? null,
-            'status_id' => $credentials['status'],
             'type_id' => Contract\ContractType::findOrFail($credentials['type'])->id,
-        ]);
-
-        return to_route('contract.edit', ['id' => $contract->id])
-            ->with('success', 'Le contrat a été créé avec succès.');
-    }
-
-    public function edit(Request $request, string $id): View
-    {
-        return view('object.contract.edit', [
-            'contract' => Contract::findOrFail($id),
-
-            'companies' => self::companies(),
-            'types' => self::types(),
-            'statuses' => self::statuses(),
-        ]);
-    }
-
-    public function update(ContractUpdateRequest $request, string $id): RedirectResponse
-    {
-        $contract = Contract::findOrFail($id);
-        $credentials = $request->validated();
-
-        $contract->update([
             'start_date' => $credentials['start'],
             'end_date' => $credentials['end'] ?? null,
-            'status_id' => $credentials['status'],
         ]);
 
-        return back()->with('success', 'Le contrat a été mis à jour avec succès.');
+        return to_route('contract.view', ['id' => $contract->id])
+            ->with('success', 'Le contrat a été créé avec succès.');
     }
 
     public function view(Request $request, string $id): View
@@ -131,7 +107,6 @@ class ContractController extends Controller
 
             'companies' => self::companies(),
             'types' => self::types(),
-            'statuses' => self::statuses(),
         ]);
     }
 
@@ -148,13 +123,6 @@ class ContractController extends Controller
     {
         return Contract\ContractType::all()->map(fn($type) => [
             'value' => $type->id, 'label' => $type->name, 'data' => ['monthly' => $type->monthly]
-        ])->toArray();
-    }
-
-    private static function statuses(): array
-    {
-        return Contract\ContractStatus::all()->map(fn($status) => [
-            'value' => $status->id, 'label' => $status->name
         ])->toArray();
     }
 }

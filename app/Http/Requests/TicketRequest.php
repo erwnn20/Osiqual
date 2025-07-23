@@ -22,14 +22,13 @@ class TicketRequest extends FormRequest
      */
     public function rules(): array
     {
-//        $this->dd();
         return [
             'title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
             'client' => ['required', 'exists:users,id'],
             'technician' => ['nullable', 'exists:users,id'],
             'duration' => ['nullable', 'integer', 'min:0'],
-            'creation' => ['nullable', 'required_with:end', 'date', 'date_format:Y-m-d\TH:i',],
+            'creation' => ['nullable', 'required_with:end', 'date', 'date_format:Y-m-d\TH:i'],
             'end' => ['nullable', 'date', 'date_format:Y-m-d\TH:i', 'after_or_equal:creation'],
             'status' => ['required', 'exists:ticket_statuses,id'],
             'priority' => ['required', 'exists:ticket_priorities,id'],

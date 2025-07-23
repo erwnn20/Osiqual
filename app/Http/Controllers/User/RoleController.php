@@ -18,14 +18,9 @@ class RoleController extends Controller
         return view('object.status.index', [
             'cards' => [
                 /*[
-                    'icon' => 'file-text',
-                    'value' => Contract::where('status_id', Contract\ContractStatus::inProgress()->id)->count(),
-                    'title' => 'Contrats en Cours',
-                ],
-                [
-                    'icon' => 'building-2',
-                    'value' => Company::all()->filter(fn(Company $company) => $company->currentContract() === null)->count(),
-                    'title' => 'Sociétés sans Contract',
+                    'icon' => , // icon with lucide
+                    'value' => ,
+                    'title' => ,
                 ],*/
             ],
             'data' => User\Role::paginate(8),

@@ -24,7 +24,9 @@ class CompanyController extends Controller
             'cards' => [
                 [
                     'icon' => 'building-2',
-                    'value' => Company::all()->filter(fn(Company $company) => $company->currentContract() !== null)->count(),
+                    'value' => Company::all()
+                        ->filter(fn(Company $company) => $company->currentContracts('attributable')->count() > 0)
+                        ->count(),
                     'title' => 'Sociétés avec Contract',
                 ],
                 [

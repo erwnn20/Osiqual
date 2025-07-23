@@ -4,7 +4,6 @@
     'cards',
     'tickets',
     'contract',
-//    'contracts',
 ])
 
 <x-page.layout title="Dashboard - Osiqual">
@@ -24,9 +23,22 @@
                 </div>
 
                 <x-contract.range :contract="$contract"
-                                  title="Temps de Contrat restant"
-                                  error="Votre entreprise n'a aucun contrat en cours"
-                />
+                                  error="Votre entreprise n'a aucun contrat en cours">
+                    <div class="flex items-end gap-3 pb-0.5">
+                        <h3 class="text-xl/tight font-semibold italic">Temps de Contrat restant</h3>
+
+                        <div class="flex items-center gap-1">
+                            <span class="text-sm italic">Autres contrats en Cours</span>
+                            <span class="px-2 py-0.5 rounded-full
+                                         text-xs font-semibold tracking-wide uppercase
+                                         bg-default-800/15 text-default-800">
+                               {{ $contract->company->currentContracts('attributable')
+                                                    ->filter(fn($c) => $c->id !== $contract->id)
+                                                    ->count() }}
+                            </span>
+                        </div>
+                    </div>
+                </x-contract.range>
             </div>
 
             <x-table :data="$tickets['data']" :filter="false" :edit="$tickets['edit']">
@@ -46,25 +58,6 @@
                     </x-button>
                 </div>
             </x-table>
-
-            {{--<x-table :data="$contracts['data']" :filter="false" :edit="$contracts['edit']">
-                <div class="flex items-end gap-2">
-                    <h3 class="text-2xl/tight font-bold">Vos Derniers Contrats</h3>
-
-                    <x-button href="#" size="sm" color="link" class="black">
-                        <div class="flex items-center">
-                            <span class="italic me-1">Voir tous vos Contrats</span>
-                            <span
-                                class="px-2 py-0.5 rounded-full
-                                       text-xs font-semibold tracking-wide uppercase
-                                       bg-default-800/15 text-default-800">
-                                {{ $contracts['count'] }}
-                            </span>
-                            <i class="w-fit py-1 stroke-2" data-lucide="chevron-right"></i>
-                        </div>
-                    </x-button>
-                </div>
-            </x-table>--}}
 
         </x-page.content>
 
