@@ -15,11 +15,12 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', fn() => redirect()->route('index'));
 
-Route::prefix('/auth')->name('auth.')->controller(AuthController::class)->group(function () {
-    Route::view('/login', 'auth.login')->name('login')->middleware('guest');
-    Route::post('/login', 'login')->name('login')->middleware('guest');
-    Route::delete('/logout', 'logout')->name('logout')->middleware('auth');
-});
+Route::prefix('/auth')->name('auth.')->controller(AuthController::class)
+    ->group(function () {
+        Route::view('/login', 'auth.login')->name('login')->middleware('guest');
+        Route::post('/login', 'login')->name('login')->middleware('guest');
+        Route::delete('/logout', 'logout')->name('logout')->middleware('auth');
+    });
 
 Route::prefix('/')->middleware(['auth', 'active'])->group(function () {
 
@@ -48,8 +49,6 @@ Route::prefix('/')->middleware(['auth', 'active'])->group(function () {
             Route::get('/edit/{id}', 'edit')->name('edit')
                 ->middleware('ticket.edit')->whereUuid('id');
             Route::patch('/edit/{id}', 'update')->name('edit')
-                ->middleware('ticket.edit')->whereUuid('id');
-            Route::patch('/edit/{id}/by-client', 'updateByClient')->name('edit.client')
                 ->middleware('ticket.edit')->whereUuid('id');
 
             Route::get('/view/{id}', 'view')->name('view')

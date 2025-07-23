@@ -69,7 +69,7 @@ class TicketController extends Controller
                 ],
                 'data' => $user->company->tickets()->orderByDesc('creation_date')->paginate(8),
                 'create' => true,
-                'edit' => true,
+                'edit' => false,
 
                 'icon' => 'ticket',
                 'header' => 'Tickets',
@@ -94,7 +94,9 @@ class TicketController extends Controller
             ]);
 
         elseif ($user->role->permission_client)
-            return view('object.ticket.client.new', []);
+            return view('object.ticket.client.new', [
+                'contract' => $user->company->currentContract(),
+            ]);
 
         abort(Response::HTTP_FORBIDDEN);
     }
@@ -175,32 +177,23 @@ class TicketController extends Controller
             'creation_date' => $creationDate,
         ]);
 
-        return to_route('ticket.edit', ['id' => $ticket->id])
+        return to_route('ticket.view', ['id' => $ticket->id])
             ->with('success', 'Le ticket a été créé avec succès.');
     }
 
     public function edit(Request $request, string $id): View
     {
         $user = $request->user();
-        $ticket = Ticket::findOrFail($id);
 
-        $data = [
-            'ticket' => $ticket,
+        return view('object.ticket.edit', [
+            'ticket' => $ticket = Ticket::findOrFail($id),
 
             'clients' => self::clients($ticket->company),
             'technicians' => self::technicians(),
             'statuses' => self::statuses(),
             'priorities' => self::priorities(),
             'criticalities' => self::criticalities(),
-        ];
-
-        if ($user->role->permission_technician)
-            return view('object.ticket.edit', $data);
-
-        elseif ($user->role->permission_client)
-            return view('object.ticket.client.edit', $data);
-
-        abort(Response::HTTP_FORBIDDEN);
+        ]);
     }
 
     public function update(TicketRequest $request, string $id): RedirectResponse
@@ -229,19 +222,6 @@ class TicketController extends Controller
             'priority_id' => $credentials['priority'],
             'criticality_id' => $credentials['criticality'],
             'end_date' => $credentials['end'] ?? null,
-        ]);
-
-        return back()->with('success', 'Le ticket a été mis à jour avec succès.');
-    }
-
-    public function updateByClient(TicketClientRequest $request, string $id): RedirectResponse
-    {
-        $ticket = Ticket::findOrFail($id);
-        $credentials = $request->validated();
-
-        $ticket->update([
-            'title' => $credentials['title'],
-            'description' => $credentials['description'],
         ]);
 
         return back()->with('success', 'Le ticket a été mis à jour avec succès.');

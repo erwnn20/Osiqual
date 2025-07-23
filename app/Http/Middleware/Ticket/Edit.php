@@ -20,9 +20,7 @@ class Edit extends MiddlewareTemplate
         $user = $request->user();
         $ticket = Ticket::findOrFail($request->route('id'));
 
-        $this->condition = $user->role->permission_technician
-            || $ticket->client->is($user)
-            || $ticket->company->id === $user->company->id;
+        $this->condition = $user->role->permission_technician;
         $this->code = Response::HTTP_FORBIDDEN;
         $this->message = 'Vous ne pouvez pas modifier ce ticket.';
 
