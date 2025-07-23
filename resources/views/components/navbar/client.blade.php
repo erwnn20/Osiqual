@@ -16,7 +16,7 @@
             Contrats
         </x-navbar.element.link>
         <x-navbar.element.link :href="route('company.self')" icon="building-2"
-                               :active="Route::currentRouteName() === 'company.index'">
+                               :active="Route::currentRouteName() === 'company.self'">
             Société
         </x-navbar.element.link>
     </x-navbar.element.part>
