@@ -6,13 +6,13 @@
 <tr class="bg-default-50 border-b border-default-200 hover:bg-default-100">
     <!-- Company -->
     <x-table.element :head="true" class="ps-6">
-        <div class="flex gap-1 items-center">
+        <div class="flex gap-1.5 items-center">
             {{ $data->company->name }}
 
             @if($data->isParent())
-                <x-tooltip title="Contrat parent">
+                <div title="Contrat parent">
                     <i class="h-4 w-fit text-default-400/65 filled" data-lucide="star"></i>
-                </x-tooltip>
+                </div>
             @endif
         </div>
     </x-table.element>

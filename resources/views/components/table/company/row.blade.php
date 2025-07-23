@@ -6,13 +6,13 @@
 <tr class="bg-default-50 border-b border-default-200 hover:bg-default-100">
     <!-- Name -->
     <x-table.element :head="true" class="ps-6">
-        <div class="flex gap-1 items-center">
+        <div class="flex gap-1.5 items-center">
             {{ $data->name }}
 
             @if(!$data->currentContracts('attributable')->count() > 0)
-                <x-tooltip title="Aucun Contrat pouvant accueillir de Ticket en Cours">
+                <div title="Aucun Contrat pouvant accueillir de Ticket en Cours">
                     <i class="h-4 w-fit text-error" data-lucide="circle-alert"></i>
-                </x-tooltip>
+                </div>
             @endif
         </div>
     </x-table.element>
