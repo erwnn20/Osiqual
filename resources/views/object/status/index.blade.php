@@ -50,7 +50,7 @@
                             {{ $data instanceof LengthAwarePaginator ? $data->total() : $data->count() }}
                         </span>
 
-                        @if(get_class($data->first()) === Contract\ContractStatus::class)
+                        @if(Route::currentRouteName() === 'contract.status.index')
                             <small class="h-full italic text-default-500">
                                 Les conditions seront vérifiées dans l’ordre décroissant des valeurs.
                             </small>
@@ -66,11 +66,11 @@
                     <x-form.part :title="'Nouveau '. $header "
                                  :submit="['text' => 'Créer', 'icon' => 'plus']">
 
-                        @switch(get_class($data->first()))
+                        @switch(Route::currentRouteName())
 
-                            @case(Ticket\TicketCriticality::class)
-                            @case(Ticket\TicketPriority::class)
-                            @case(Ticket\TicketStatus::class)
+                            @case('ticket.status.index')
+                            @case('ticket.priority.index')
+                            @case('ticket.criticality.index')
                                 <div class="flex gap-2.5">
                                     <x-input type="text"
                                              name="name"
@@ -123,7 +123,7 @@
                                 </div>
                                 @break
 
-                            @case(Contract\ContractStatus::class)
+                            @case('contract.status.index')
                                 <div class="flex gap-2.5">
                                     <x-input type="text"
                                              name="name"
@@ -330,7 +330,7 @@
                                 </div>
                                 @break
 
-                            @case(Contract\ContractType::class)
+                            @case('contract.type.index')
                                 <x-input type="number"
                                          name="duration"
                                          label="Durée du Contrat (en heures)"
@@ -349,7 +349,7 @@
                                 />
                                 @break
 
-                            @case(User\Role::class)
+                            @case('user.role.index')
                                 <x-input type="text"
                                          name="name"
                                          label="Nom"
