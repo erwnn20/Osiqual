@@ -1,61 +1,159 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
-
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+    <img src="public/img/logo.svg" height="75" alt="Osiqual Logo">
+    <h1 align="center">Osiqual</h1>
 </p>
 
-## About Laravel
+<p align="center">
+  <a href="https://laravel.com/docs/12.x/" target="_blank">
+    <img src="https://img.shields.io/badge/Laravel-12.x-red?logo=laravel" alt="Laravel">
+  </a>
+  <a href="https://www.php.net/releases/8.2/en.php" target="_blank">
+    <img src="https://img.shields.io/badge/PHP-8.2-blue?logo=php" alt="PHP 8.2">
+  </a>
+  <a href="https://lucide.dev/icons/" target="_blank">
+    <img src="https://img.shields.io/badge/Lucide-Icons-f56565?logo=lucide" alt="Lucide Icons">
+  </a>
+  <a href="https://github.com/rinvex/countries" target="_blank">
+    <img src="https://img.shields.io/badge/Rinvex-Countries-0a0a0a?logo=github&logoColor=white" alt="Rinvex Countries">
+  </a>
+</p>
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+# Table of Contents
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- [Installation](#installation)
+- [Configuration de la base de données](#configuration-la-base-de-données)
+- [Déploiement](#déploiement)
+    - [Déploiement en production](#déploiement-en-production)
+    - [Déploiement rapide pour développement](#déploiement-rapide-pour-développement)
+- [Commandes utiles](#commandes-utiles-récapitulatives)
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Installation
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### 1. Installer les dépendances
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+```bash
+  composer install
+  npm install
+```
 
-## Laravel Sponsors
+### 2. Configuration de l'environnement
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+- Copier le fichier `.env.example` en `.env` :
 
-### Premium Partners
+```bash
+  cp .env.example .env
+```
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+- Générer la clé de l’application :
 
-## Contributing
+```bash
+  php artisan key:generate
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+---
 
-## Code of Conduct
+## Configuration la base de données
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+#### 1. Lancer les migrations :
 
-## Security Vulnerabilities
+```bash
+  php artisan migrate
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+- Pour lancer les migrations et remplir la base avec les seeders par défaut :
 
-## License
+```bash
+  php artisan migrate --seed
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- Pour spécifier un seeder particulier lors du seed :
+
+```bash
+  php artisan db:seed --class=YourSeeder
+```
+
+> Si la base de données n'existe pas, Laravel vous proposera de la créer. Répondez **oui**.
+
+#### 2. Lancer les migrations :
+
+- Vider et recréer toutes les tables :
+
+```bash
+  php artisan migrate:fresh
+```
+
+- Seed la base de données (par défaut `DatabaseSeeder`)  :
+
+```bash
+  php artisan db:seed
+```
+
+- Vider, recréer et seed la base en une seule commande :
+
+```bash
+  php artisan migrate:fresh --seed
+```
+
+---
+
+## Déploiement
+
+### Déploiement en production
+
+#### 1. Préparation et build du projet
+
+```bash
+  composer run prod
+```
+
+Cela execute ces commandes :
+
+- `php artisan optimize:clear`
+- `php artisan config:cache`
+- `php artisan view:cache`
+- `npm run build`
+
+#### 2. Lancement du serveur Laravel
+
+```bash
+  php artisan serve --host=0.0.0.0 --port=8000
+```
+
+Options :
+
+- `--host=0.0.0.0` : rend le serveur accessible depuis l’extérieur (ex. autres machines sur le réseau local)
+- `--port=8000` : spécifie le port d’écoute (par défaut 8000).
+
+> ⚠️ Ce mode est adapté pour un déploiement simple et rapide local ou en développement.  
+> Pour un déploiement en production réel, il est recommandé d’utiliser un serveur HTTP dédié comme Nginx ou Apache.
+
+### Déploiement rapide pour développement
+
+#### Préparation et build du projet :
+
+```bash
+  composer run dev
+```
+
+Cela execute ces commandes :
+
+- `php artisan serve` : lance le serveur Laravel (⚠️ *ne pas lancer en même temps que le serveur de prod*).
+- `php artisan queue:listen` : écoute les jobs dans la file (utile pour les tests).
+- `npm run dev` : compile les assets (JS/CSS) en mode développement avec Vite, avec rechargement automatique à chaque
+  sauvegarde.
+
+---
+
+## Commandes utiles récapitulatives
+
+| Commande                           | Description                                           |
+|------------------------------------|-------------------------------------------------------|
+| `php artisan migrate --seed`       | Migrations + seed par défaut (`DatabaseSeeder`)       |
+| `php artisan migrate:fresh --seed` | Supprime, recrée et seed la base                      |
+| `composer run dev`                 | Prépare et lance en mode dev (serveur + queue + Vite) |
+| `composer run prod`                | Prépare le projet pour production (cache + build)     |
+| `php artisan serve`                | lance le serveur Laravel                              |
