@@ -138,31 +138,3 @@ Route::prefix('/')->middleware(['auth', 'active'])->group(function () {
     Route::get('/profile', [UserController::class, 'self'])->name('user.self');
     Route::patch('/profile', [UserController::class, 'updateSelf'])->name('user.self');
 });
-
-//
-
-Route::get('/test', function () {
-    return view('test', [
-        'opts' => [
-            ['type' => 'option', 'value' => 'opt-default', 'label' => 'Default'],
-            ['type' => 'opt', 'value' => 'opt-no-label'],
-            ['value' => 'opt-no-type-label'],
-            [
-                'type' => 'group',
-                'label' => 'Group Name',
-                'value' => [
-                    ['value' => 'group-opt-1'],
-                    ['value' => 'group-opt-2'],
-                ],
-            ],
-            [
-                'type' => 'optgroup',
-                'label' => 'Group Name',
-                'value' => [
-                    ['value' => 'optgroup-opt-1'],
-                    ['value' => 'optgroup-opt-2'],
-                ],
-            ],
-        ]
-    ]);
-})->name('test');

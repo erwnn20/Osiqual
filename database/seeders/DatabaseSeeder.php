@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\Company;
 use App\Models\Contract\ContractStatus;
-use App\Models\Contract\ContractType;
 use App\Models\Ticket\TicketCriticality;
 use App\Models\Ticket\TicketPriority;
 use App\Models\Ticket\TicketStatus;
