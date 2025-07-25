@@ -102,7 +102,7 @@ class TicketController extends Controller
 
         elseif ($user->role->permission_client)
             return view('object.ticket.client.new', [
-                'contract' => $user->company->currentContract(),
+                'contract' => $user->company->currentContracts('attributable')->last(),
             ]);
 
         abort(Response::HTTP_FORBIDDEN);
@@ -222,7 +222,7 @@ class TicketController extends Controller
         $duration = $credentials['duration'] ?? 0;
         $contract = $ticket->contract;
 
-        if ($contract->durationRemaining() < $duration) {
+        if ($contract->durationRemaining() < ($duration - $ticket->duration)) {
             return back()->withErrors([
                 'duration' => "Le contrat de l'entreprise sélectionnée à la date choisie ne dispose pas d'un temps restant suffisant.",
             ])->withInput();

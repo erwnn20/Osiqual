@@ -113,7 +113,7 @@ class DashboardController extends Controller
                     'count' => $user->company->tickets()->count(),
                     'edit' => false
                 ],
-                'contract' => $user->company->currentContracts('attributable')->first(),
+                'contract' => $user->company->currentContracts('attributable')->last(),
             ]);
         }
 

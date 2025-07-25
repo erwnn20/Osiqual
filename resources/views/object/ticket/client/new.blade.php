@@ -19,9 +19,22 @@
                 @endif
 
                 <x-contract.range :contract="$contract"
-                                  title="Temps de Contrat restant"
-                                  error="Votre entreprise n'a aucun contrat en cours"
-                />
+                                  error="Votre entreprise n'a aucun contrat en cours">
+                    <div class="flex items-end gap-3 pb-0.5">
+                        <h3 class="text-xl/tight font-semibold italic">Temps de Contrat restant</h3>
+
+                        <div class="flex items-center gap-1">
+                            <span class="text-sm italic">Autres contrats en Cours</span>
+                            <span class="px-2 py-0.5 rounded-full
+                                         text-xs font-semibold tracking-wide uppercase
+                                         bg-default-800/15 text-default-800">
+                               {{ $contract->company->currentContracts('attributable')
+                                                    ->filter(fn($c) => $c->id !== $contract->id)
+                                                    ->count() }}
+                            </span>
+                        </div>
+                    </div>
+                </x-contract.range>
             </div>
 
             <x-form :action="route('ticket.new.client')" method="post">
