@@ -40,7 +40,12 @@
                             </x-card.notification>
                         @endif
 
-                        <x-form.part title="Informations" :submit="['text' => 'Enregister', 'icon' => 'save']">
+                        <x-form.part title="Informations"
+                                     :submit="['text' => 'Enregister', 'icon' => 'save']"
+                                     :buttons="[['active' => $user->active,
+                                             'type' => 'submit', 'text' => 'Bloquer',
+                                             'icon' => 'ban', 'size' => 'sm', 'color' => 'link',
+                                             'class' => 'negative mx-1.5', 'form' => 'block']]">
                             <div class="flex gap-2.5">
                                 <x-input type="text"
                                          name="firstname"
@@ -129,10 +134,8 @@
                 </x-form>
 
                 @if($user->active)
-                    <x-form :action="route('user.block', ['id' => $user->id])" method="patch">
-                        <x-button type="submit" size="sm" icon="ban" color="negative" class="w-full mt-4">
-                            Bloquer l'utilisateur
-                        </x-button>
+                    <x-form id="block" method="patch"
+                            :action="route('user.block', ['id' => $user->id])">
                     </x-form>
                 @endif
             </div>
