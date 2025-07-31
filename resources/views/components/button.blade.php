@@ -4,6 +4,7 @@
     'color' => 'primary',
 
     'href' => null,
+    'form' => null,
     'data' => [],
 
     'title' => null,
@@ -17,6 +18,7 @@
     {{ $attributes->class(['btn', "btn-$size", 'btn-icon' => !empty($icon), "btn-$color"]) }}
 
     @if($href) href="{{ $href }}" @endif
+    @if($form) form="{{ $form }}" @endif
     @if($title) title="{{ $title }}" @endif
     @if($autofocus) autofocus @endif
     @if($disabled) disabled @endif
