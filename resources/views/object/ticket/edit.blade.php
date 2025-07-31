@@ -2,6 +2,7 @@
 
 @props([
     'ticket',
+    'delete',
 
     'clients',
     'technicians',
@@ -27,7 +28,12 @@
                         </x-card.notification>
                     @endif
 
-                    <x-form.part title="Informations" :submit="['text' => 'Enregister', 'icon' => 'save']">
+                    <x-form.part title="Informations"
+                                 :submit="['text' => 'Enregister', 'icon' => 'save']"
+                                 :buttons="[['active' => $delete,
+                                             'type' => 'submit', 'text' => 'Supprimer',
+                                             'icon' => 'trash-2', 'size' => 'md', 'color' => 'link',
+                                             'class' => 'negative mx-1.5', 'form' => 'delete']]">
                         <x-input type="text"
                                  name="title"
                                  label="Titre du Ticket"
@@ -131,6 +137,13 @@
 
             </x-form>
 
+            @if($delete)
+                <x-form id="delete" method="delete"
+                        :action="route('ticket.delete', ['id' => $ticket->id])"
+                        onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce ticket ?')">
+                </x-form>
+            @endif
+
             <div>
                 @if (session('success_step'))
                     <x-card.notification class="mb-4" color="#00B112">
@@ -159,8 +172,10 @@
                                 </p>
 
                                 <x-form class="ms-auto" method="delete"
-                                        :action="route('ticket.step.delete', ['ticket' => $ticket->id, 'id' => $step->id]).'#steps'">
-                                    <x-button type="submit" color="link" class="negative" icon="trash-2">Supprimer
+                                        :action="route('ticket.step.delete', ['ticket' => $ticket->id, 'id' => $step->id]).'#steps'"
+                                        onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette étape de ticket ?')">
+                                    <x-button type="submit" color="link" class="negative" icon="trash-2">
+                                        Supprimer
                                     </x-button>
                                 </x-form>
                             </div>

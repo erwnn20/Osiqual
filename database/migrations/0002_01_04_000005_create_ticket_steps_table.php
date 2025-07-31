@@ -17,7 +17,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->foreignIdFor(Ticket::class)
                 ->constrained()
-                ->restrictOnDelete();
+                ->cascadeOnDelete();
             $table->foreignIdFor(User::class , 'technician_id')
                 ->constrained()
                 ->restrictOnDelete();

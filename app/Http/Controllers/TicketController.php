@@ -205,6 +205,7 @@ class TicketController extends Controller
 
         return view('object.ticket.edit', [
             'ticket' => $ticket = Ticket::findOrFail($id),
+            'delete' => $user->role->permission_admin,
 
             'clients' => self::clients($ticket->company),
             'technicians' => self::technicians(),
@@ -241,6 +242,13 @@ class TicketController extends Controller
         ]);
 
         return back()->with('success', 'Le ticket a été mis à jour avec succès.');
+    }
+
+    public function delete(string $id): RedirectResponse
+    {
+        Ticket::destroy($id);
+
+        return to_route('ticket.index')->with('success', 'Le ticket a été supprimé avec succès.');
     }
 
     public function view(string $id): View
